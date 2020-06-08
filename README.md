@@ -18,7 +18,23 @@ To install for development, which populates the `node_modules` directory.
 yarn
 ```
 
-To start the app for development, this creates the development server which listens for changes in the ./src/ directory:
+Also install dependencies for the mock server
+
+```
+cd mock-server
+yarn
+```
+
+Start the mock server:
+
+```
+cd mock-server
+yarn start
+```
+
+*NOTE* see mock-server/README.md for instructions on how to query the server.
+
+To start the app for development, this creates the development server which listens for changes in the ./src/ directory and queries the mock server:
 ```
 yarn start
 ```

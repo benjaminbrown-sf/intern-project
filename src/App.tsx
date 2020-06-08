@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core/styles';
 import Button from './elements/Button';
 import theme from './theme';
-import { useGet } from './hooks/axiosHooks';
+import { useGet, CommitmentsQueryParams } from './hooks/axiosHooks';
 
 const MUITheme = createMuiTheme(theme);
 
@@ -32,17 +32,28 @@ const useAppStyles = makeStyles(theme => {
     errorText: {
       color: theme.palette.error.main,
     },
+    response: {
+      fontFamily: 'monospace',
+      whiteSpace: 'pre',
+      textAlign: 'left',
+    },
   };
 });
 
 const App = (): JSX.Element => {
   const classes = useAppStyles();
 
-  // this hook requests example data from the site 'https://jsonplaceholder.typicode.com/'
-  // just for testing purposes.  This component will re-render every time the state of
-  // this request changes: when it sends the request, when it stops loading, when it has an error,
+  const queryParams: CommitmentsQueryParams = {
+    limit: 10,
+    page: 0,
+    sortField: 'firstName',
+  };
+
+  // This hook requests data from the mock server.
+  // This component will re-render every time the state of this request changes:
+  // when it sends the request, when it stops loading, when it has an error,
   // when it has a result
-  const [response, loading, error] = useGet('posts/1');
+  const [response, loading, error] = useGet('commitments', queryParams);
 
   return (
     <ThemeProvider theme={MUITheme}>
@@ -71,7 +82,9 @@ const App = (): JSX.Element => {
               </p>
             ) : null}
             {response ? (
-              <div> Got Response: {JSON.stringify(response.data)} </div>
+              <div className={classes.response}>
+                {JSON.stringify(response.data, null, 2)}{' '}
+              </div>
             ) : null}
           </div>
         </div>
