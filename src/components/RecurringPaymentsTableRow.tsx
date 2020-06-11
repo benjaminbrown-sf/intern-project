@@ -3,9 +3,8 @@ import moment from 'moment';
 
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-// import { CheckCircleOutlineIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import theme from '../theme'; // Double-check this; styling should be done on top level?
+import theme from '../theme'; // Temporary
 
 import { Commitment } from './RecurringPaymentsTable';
 
@@ -18,6 +17,10 @@ const useStyles = makeStyles(theme => {
     checkCircle: {
       color: '#14FF52',
     },
+    alignCell: {
+      display: 'flex',
+      alignItems: 'center',
+    },
   };
 });
 
@@ -29,19 +32,21 @@ export interface RowProps {
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const classes = useStyles();
 
+  const schedules = props.commitment.schedules[0];
+
   // Handles Date Formatting
-  let timestamp = props.commitment.schedules[0].nextPaymentTimestamp;
+  let timestamp = schedules.nextPaymentTimestamp;
   let date = moment(timestamp).format('L');
 
   let name = props.commitment.firstName + ' ' + props.commitment.lastName;
 
-  let totalGiving = `$${props.commitment.amountPaidToDate / 100} ${
+  let totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
     props.commitment.currency
   }`;
 
-  let nextPayment = `$${props.commitment.schedules[0].recurringAmount} ${props.commitment.currency} / ${props.commitment.schedules[0].frequency}`;
+  let nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
 
-  let status = props.commitment.schedules[0].status;
+  let status = schedules.status;
 
   return (
     <TableRow>
