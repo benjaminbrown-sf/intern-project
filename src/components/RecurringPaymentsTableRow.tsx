@@ -60,10 +60,12 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
         <div>{nextPayment}</div>
       </TableCell>
       <TableCell align="left">
-        {status === 'ACTIVE' ? (
-          <CheckCircleOutlineIcon className={classes.checkCircle} />
-        ) : null}
-        {status}
+        <div className={classes.alignCell}>
+          {status === 'ACTIVE' ? (
+            <CheckCircleOutlineIcon className={classes.checkCircle} />
+          ) : null}
+          {status}
+        </div>
       </TableCell>
     </TableRow>
   );
