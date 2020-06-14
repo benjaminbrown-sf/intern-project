@@ -74,7 +74,6 @@ const RecurringPaymentsTable = (): JSX.Element => {
 
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
-  const [sortColumn, setSortColumn] = React.useState('firstName');
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
@@ -100,7 +99,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
     },
     {
       label: 'Status',
-      value: 'amountPaidToDate',
+      value: 'status',
     },
   ];
 
@@ -114,10 +113,9 @@ const RecurringPaymentsTable = (): JSX.Element => {
                 <TableCell
                   className={classes.tableCellHeader}
                   onClick={() => {
-                    if (sortColumn === obj.value) {
+                    if (obj.value === sortVariable) {
                       setSortDirection(sortDirection === 'ASC' ? 'DSC' : 'ASC');
                     }
-                    setSortColumn(obj.value);
                     setSortVariable(obj.value);
                   }}
                 >
@@ -141,7 +139,6 @@ const RecurringPaymentsTable = (): JSX.Element => {
                 <RecurringPaymentsTableRow commitment={commitment} />
               ))
             : null}
-          {}
         </TableBody>
       </Table>
     </TableContainer>
