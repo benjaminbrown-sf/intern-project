@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
 } from '@material-ui/core';
+import theme from '../theme';
 
 import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
 
@@ -15,11 +16,21 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import RecurringPaymentsTableRow from './RecurringPaymentsTableRow';
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
   return {
     columnHeader: {
       fontWeight: 'bold',
       color: '#21007F',
+    },
+    tableCellHeader: {
+      cursor: 'pointer',
+      '&:hover': {
+        filter: 'brightness(120%)',
+        userSelect: 'none',
+      },
+    },
+    errorText: {
+      color: theme.palette.error.main,
     },
   };
 });
@@ -58,28 +69,76 @@ export interface TableProps {
   };
 }
 
-const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
+const RecurringPaymentsTable = (): JSX.Element => {
   const classes = useStyles();
 
-  const commitments = props.response.commitments;
+  const [sortDirection, setSortDirection] = React.useState('ASC');
+  const [sortVariable, setSortVariable] = React.useState('firstName');
+
+  const queryParams: CommitmentsQueryParams = {
+    limit: 10,
+    page: 0,
+    sortField: sortVariable,
+    sortDirection,
+  };
+
+  const [response, loading, error] = useGet('commitments', queryParams);
+
+  const columns = [
+    {
+      label: 'Donor',
+      value: 'firstName',
+    },
+    {
+      label: 'Total Giving',
+      value: 'amountPaidToDate',
+    },
+    {
+      label: 'Next Installment',
+      value: 'amountPaidToDate',
+    },
+    {
+      label: 'Status',
+      value: 'status',
+    },
+  ];
 
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.columnHeader}>Donor</TableCell>
-            <TableCell className={classes.columnHeader}>Total Giving</TableCell>
-            <TableCell className={classes.columnHeader}>
-              Next Installment
-            </TableCell>
-            <TableCell className={classes.columnHeader}>Status</TableCell>
+            {columns.map(obj => {
+              return (
+                <TableCell
+                  className={classes.tableCellHeader}
+                  onClick={() => {
+                    if (obj.value === sortVariable) {
+                      setSortDirection(sortDirection === 'ASC' ? 'DSC' : 'ASC');
+                    }
+                    setSortVariable(obj.value);
+                  }}
+                >
+                  {obj.label}
+                </TableCell>
+              );
+            })}
           </TableRow>
         </TableHead>
         <TableBody>
-          {commitments.map(commitment => (
-            <RecurringPaymentsTableRow commitment={commitment} />
-          ))}
+          <div>
+            {loading ? <p> Loading...</p> : null}
+            {error ? (
+              <p className={classes.errorText}>
+                There was an error making the request.
+              </p>
+            ) : null}
+          </div>
+          {response
+            ? response.data.commitments.map(commitment => (
+                <RecurringPaymentsTableRow commitment={commitment} />
+              ))
+            : null}
         </TableBody>
       </Table>
     </TableContainer>

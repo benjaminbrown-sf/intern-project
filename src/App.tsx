@@ -55,7 +55,6 @@ const App = (): JSX.Element => {
   // This component will re-render every time the state of this request changes:
   // when it sends the request, when it stops loading, when it has an error,
   // when it has a result
-  const [response, loading, error] = useGet('commitments', queryParams);
 
   return (
     <ThemeProvider theme={MUITheme}>
@@ -63,37 +62,8 @@ const App = (): JSX.Element => {
         <header className={classes.appHeader}>
           <img src="logo.png" className={classes.appLogo} alt="logo" />
         </header>
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
         <div>
-          <h4> Buttons Example </h4>
-          <Button type="primary">Primary Button</Button>
-          <Button type="secondary">Secondary Button</Button>
-          <Button disabled type="primary">
-            Disabled Button
-          </Button>
-        </div>
-        <div>
-          {response ? (
-            <RecurringPaymentsTable response={response.data} />
-          ) : null}
-        </div>
-        <div>
-          <h4> Network Request Example </h4>
-          <div>
-            {loading ? <p> Loading...</p> : null}
-            {error ? (
-              <p className={classes.errorText}>
-                There was an error making the request.
-              </p>
-            ) : null}
-            {response ? (
-              <div className={classes.response}>
-                {JSON.stringify(response.data, null, 2)}{' '}
-              </div>
-            ) : null}
-          </div>
+          <RecurringPaymentsTable />
         </div>
       </div>
     </ThemeProvider>
