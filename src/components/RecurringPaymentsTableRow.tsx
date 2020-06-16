@@ -16,10 +16,14 @@ const useStyles = makeStyles(theme => {
     },
     checkCircle: {
       color: '#14FF52',
+      fontSize: 'small',
     },
     alignCell: {
       display: 'flex',
       alignItems: 'center',
+    },
+    hiddenText: {
+      visibility: 'hidden',
     },
   };
 });
@@ -48,13 +52,22 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
 
   let status = schedules.status;
 
+  const fixCasing = (str: string) => {
+    return (
+      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
+    );
+  };
+
   return (
     <TableRow>
       <TableCell className={classes.flexCell} align="left">
         <div>{name}</div>
         <div>{props.commitment.email}</div>
       </TableCell>
-      <TableCell align="left">{totalGiving}</TableCell>
+      <TableCell align="left">
+        <div>{totalGiving}</div>
+        <div className={classes.hiddenText}>Ghost Text</div>
+      </TableCell>
       <TableCell className={classes.flexCell} align="left">
         <div>{date}</div>
         <div>{nextPayment}</div>
@@ -64,8 +77,9 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
           {status === 'ACTIVE' ? (
             <CheckCircleOutlineIcon className={classes.checkCircle} />
           ) : null}
-          {status}
+          {fixCasing(status)}
         </div>
+        <div className={classes.hiddenText}>Ghost Text</div>
       </TableCell>
     </TableRow>
   );

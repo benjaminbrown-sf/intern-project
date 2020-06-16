@@ -9,6 +9,11 @@ import {
   Paper,
   Chip,
 } from '@material-ui/core';
+
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import SearchIcon from '@material-ui/icons/Search';
+
 import theme from '../theme';
 
 import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
@@ -32,6 +37,35 @@ const useStyles = makeStyles(theme => {
     },
     errorText: {
       color: theme.palette.error.main,
+    },
+    filterIcon: {
+      fontSize: 'medium',
+    },
+    filterContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    filters: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '20%', // Especially not married to this
+    },
+    searchBar: {
+      justifyContent: 'right',
+      borderRadius: theme.shape.borderRadius,
+    },
+    searchIcon: {
+      position: 'absolute',
+      marginTop: '15px',
+    },
+    emptySpace: {
+      visibility: 'hidden',
+    },
+    searchIconContainer: {
+      display: 'flex',
     },
   };
 });
@@ -76,6 +110,10 @@ const RecurringPaymentsTable = (): JSX.Element => {
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
   const [filterVariables, setFilterVariables] = React.useState(['']);
+
+  const [activeChipStatus, setActiveChipStatus] = React.useState(true);
+  const [canceledChipStatus, setCanceledChipStatus] = React.useState(true);
+  const [stoppedChipStatus, setStoppedChipStatus] = React.useState(true);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
@@ -123,27 +161,43 @@ const RecurringPaymentsTable = (): JSX.Element => {
 
   return (
     <TableContainer component={Paper}>
-      {filters.map(filter => {
-        return (
-          <Chip
-            label={filter.label}
-            onClick={() => {
-              // May be a problem, as filterVariables will never again contain ''
-              let newFilters = [...filterVariables].filter(
-                index => index != ''
-              );
-              if (newFilters.includes(filter.value)) {
-                const index = newFilters.indexOf(filter.value);
-                newFilters.splice(index, 1);
-              } else {
-                newFilters.push(filter.value);
-              }
-              console.log(newFilters);
-              setFilterVariables(newFilters);
-            }}
-          ></Chip>
-        );
-      })}
+      <div className={classes.filterContainer}>
+        <div className={classes.filters}>
+          <FilterListIcon className={classes.filterIcon} />
+          Filter
+          {filters.map(obj => {
+            return (
+              <Chip
+                variant={
+                  filterVariables.includes(obj.value) ? 'outlined' : 'default'
+                }
+                clickable={true}
+                label={obj.label}
+                onClick={() => {
+                  // May be a problem, as filterVariables will never again contain ''
+                  let newFilters = [...filterVariables].filter(
+                    index => index != ''
+                  );
+                  if (newFilters.includes(obj.value)) {
+                    const index = newFilters.indexOf(obj.value);
+                    newFilters.splice(index, 1);
+                  } else {
+                    newFilters.push(obj.value);
+                  }
+                  setFilterVariables(newFilters);
+                }}
+              ></Chip>
+            );
+          })}
+        </div>
+        <div className={classes.emptySpace}>Empty Space</div>
+        <div>
+          <div className={classes.searchIconContainer}>
+            <SearchIcon className={classes.searchIcon} />
+          </div>
+          <OutlinedInput placeholder="Search"></OutlinedInput>
+        </div>
+      </div>
       <Table>
         <TableHead>
           <TableRow>
