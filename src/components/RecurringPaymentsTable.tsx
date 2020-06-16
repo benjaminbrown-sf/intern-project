@@ -111,10 +111,6 @@ const RecurringPaymentsTable = (): JSX.Element => {
   const [sortVariable, setSortVariable] = React.useState('firstName');
   const [filterVariables, setFilterVariables] = React.useState(['']);
 
-  const [activeChipStatus, setActiveChipStatus] = React.useState(true);
-  const [canceledChipStatus, setCanceledChipStatus] = React.useState(true);
-  const [stoppedChipStatus, setStoppedChipStatus] = React.useState(true);
-
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
     page: 0,
