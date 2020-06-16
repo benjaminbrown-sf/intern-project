@@ -65,6 +65,7 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
 
   return (
     <TableContainer component={Paper}>
+      <div>{/* Only for testing my environment*/}</div>
       <Table>
         <TableHead>
           <TableRow>
