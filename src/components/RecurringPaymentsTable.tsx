@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Chip,
 } from '@material-ui/core';
 import theme from '../theme';
 
@@ -74,12 +75,14 @@ const RecurringPaymentsTable = (): JSX.Element => {
 
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
+  const [filterVariables, setFilterVariables] = React.useState(['']);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
     page: 0,
     sortField: sortVariable,
     sortDirection,
+    statuses: filterVariables.join(','),
   };
 
   const [response, loading, error] = useGet('commitments', queryParams);
@@ -103,8 +106,44 @@ const RecurringPaymentsTable = (): JSX.Element => {
     },
   ];
 
+  const filters = [
+    {
+      label: 'Active',
+      value: 'ACTIVE',
+    },
+    {
+      label: 'Canceled',
+      value: 'CANCELED',
+    },
+    {
+      label: 'Stopped',
+      value: 'STOPPED',
+    },
+  ];
+
   return (
     <TableContainer component={Paper}>
+      {filters.map(filter => {
+        return (
+          <Chip
+            label={filter.label}
+            onClick={() => {
+              // May be a problem, as filterVariables will never again contain ''
+              let newFilters = [...filterVariables].filter(
+                index => index != ''
+              );
+              if (newFilters.includes(filter.value)) {
+                const index = newFilters.indexOf(filter.value);
+                newFilters.splice(index, 1);
+              } else {
+                newFilters.push(filter.value);
+              }
+              console.log(newFilters);
+              setFilterVariables(newFilters);
+            }}
+          ></Chip>
+        );
+      })}
       <Table>
         <TableHead>
           <TableRow>
