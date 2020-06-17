@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '20%', // Especially not married to this
+      width: '350px', // Especially not married to this
     },
     searchBar: {
       justifyContent: 'right',
@@ -105,7 +105,7 @@ export interface TableProps {
 }
 
 const RecurringPaymentsTable = (): JSX.Element => {
-  const classes = useStyles();
+  const classes = useStyles(theme);
 
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
@@ -118,6 +118,11 @@ const RecurringPaymentsTable = (): JSX.Element => {
     sortDirection,
     statuses: filterVariables.join(','),
   };
+
+  // This hook requests data from the mock server.
+  // This component will re-render every time the state of this request changes:
+  // when it sends the request, when it stops loading, when it has an error,
+  // when it has a result
 
   const [response, loading, error] = useGet('commitments', queryParams);
 
@@ -132,7 +137,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
     },
     {
       label: 'Next Installment',
-      value: 'amountPaidToDate',
+      value: 'currency',
     },
     {
       label: 'Status',
@@ -164,6 +169,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
           {filters.map(obj => {
             return (
               <Chip
+                key={obj.value + 'Chip'} // Where will this matter?
                 variant={
                   filterVariables.includes(obj.value) ? 'outlined' : 'default'
                 }
@@ -171,8 +177,8 @@ const RecurringPaymentsTable = (): JSX.Element => {
                 label={obj.label}
                 onClick={() => {
                   // May be a problem, as filterVariables will never again contain ''
-                  let newFilters = [...filterVariables].filter(
-                    index => index != ''
+                  const newFilters = [...filterVariables].filter(
+                    index => index !== ''
                   );
                   if (newFilters.includes(obj.value)) {
                     const index = newFilters.indexOf(obj.value);
@@ -200,6 +206,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
             {columns.map(obj => {
               return (
                 <TableCell
+                  key={obj.value + 'Cell'}
                   className={classes.tableCellHeader}
                   onClick={() => {
                     if (obj.value === sortVariable) {
@@ -215,17 +222,24 @@ const RecurringPaymentsTable = (): JSX.Element => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <div>
-            {loading ? <p> Loading...</p> : null}
+          <TableRow>
+            {loading ? (
+              <TableCell>
+                <p> Loading...</p>
+              </TableCell>
+            ) : null}
             {error ? (
               <p className={classes.errorText}>
                 There was an error making the request.
               </p>
             ) : null}
-          </div>
+          </TableRow>
           {response
             ? response.data.commitments.map(commitment => (
-                <RecurringPaymentsTableRow commitment={commitment} />
+                <RecurringPaymentsTableRow
+                  key={commitment.id}
+                  commitment={commitment}
+                />
               ))
             : null}
         </TableBody>

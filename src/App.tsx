@@ -4,9 +4,7 @@ import {
   ThemeProvider,
   makeStyles,
 } from '@material-ui/core/styles';
-import Button from './elements/Button';
 import theme from './theme';
-import { useGet, CommitmentsQueryParams } from './hooks/axiosHooks';
 
 import RecurringPaymentsTable from './components/RecurringPaymentsTable';
 
@@ -44,18 +42,6 @@ const useAppStyles = makeStyles(theme => {
 
 const App = (): JSX.Element => {
   const classes = useAppStyles();
-
-  const queryParams: CommitmentsQueryParams = {
-    limit: 10,
-    page: 0,
-    sortField: 'firstName',
-  };
-
-  // This hook requests data from the mock server.
-  // This component will re-render every time the state of this request changes:
-  // when it sends the request, when it stops loading, when it has an error,
-  // when it has a result
-
   return (
     <ThemeProvider theme={MUITheme}>
       <div className={classes.app}>

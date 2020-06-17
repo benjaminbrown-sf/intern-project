@@ -16,7 +16,8 @@ const useStyles = makeStyles(theme => {
     },
     checkCircle: {
       color: '#14FF52',
-      fontSize: 'small',
+      fontSize: 'medium',
+      marginRight: '5px',
     },
     alignCell: {
       display: 'flex',
@@ -34,23 +35,23 @@ export interface RowProps {
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
-  const classes = useStyles();
+  const classes = useStyles(theme);
 
   const schedules = props.commitment.schedules[0];
 
   // Handles Date Formatting
-  let timestamp = schedules.nextPaymentTimestamp;
-  let date = moment(timestamp).format('L');
+  const timestamp = schedules.nextPaymentTimestamp;
+  const date = moment(timestamp).format('L');
 
-  let name = props.commitment.firstName + ' ' + props.commitment.lastName;
+  const name = props.commitment.firstName + ' ' + props.commitment.lastName;
 
-  let totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
+  const totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
     props.commitment.currency
   }`;
 
-  let nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
+  const nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
 
-  let status = schedules.status;
+  const status = schedules.status;
 
   const fixCasing = (str: string) => {
     return (
