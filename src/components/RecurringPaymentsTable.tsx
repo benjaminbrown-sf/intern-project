@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -7,7 +7,13 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Chip,
 } from '@material-ui/core';
+
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import SearchIcon from '@material-ui/icons/Search';
+
 import theme from '../theme';
 
 import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
@@ -31,6 +37,35 @@ const useStyles = makeStyles(theme => {
     },
     errorText: {
       color: theme.palette.error.main,
+    },
+    filterIcon: {
+      fontSize: 'medium',
+    },
+    filterContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    filters: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '350px', // Especially not married to this
+    },
+    searchBar: {
+      justifyContent: 'right',
+      borderRadius: theme.shape.borderRadius,
+    },
+    searchIcon: {
+      position: 'absolute',
+      marginTop: '15px',
+    },
+    emptySpace: {
+      visibility: 'hidden',
+    },
+    searchIconContainer: {
+      display: 'flex',
     },
   };
 });
@@ -70,17 +105,24 @@ export interface TableProps {
 }
 
 const RecurringPaymentsTable = (): JSX.Element => {
-  const classes = useStyles();
+  const classes = useStyles(theme);
 
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
+  const [filterVariables, setFilterVariables] = React.useState(['']);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
     page: 0,
     sortField: sortVariable,
     sortDirection,
+    statuses: filterVariables.join(','),
   };
+
+  // This hook requests data from the mock server.
+  // This component will re-render every time the state of this request changes:
+  // when it sends the request, when it stops loading, when it has an error,
+  // when it has a result
 
   const [response, loading, error] = useGet('commitments', queryParams);
 
@@ -95,7 +137,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
     },
     {
       label: 'Next Installment',
-      value: 'amountPaidToDate',
+      value: 'currency',
     },
     {
       label: 'Status',
@@ -103,14 +145,68 @@ const RecurringPaymentsTable = (): JSX.Element => {
     },
   ];
 
+  const filters = [
+    {
+      label: 'Active',
+      value: 'ACTIVE',
+    },
+    {
+      label: 'Canceled',
+      value: 'CANCELED',
+    },
+    {
+      label: 'Stopped',
+      value: 'STOPPED',
+    },
+  ];
+
   return (
     <TableContainer component={Paper}>
+      <div className={classes.filterContainer}>
+        <div className={classes.filters}>
+          <FilterListIcon className={classes.filterIcon} />
+          Filter
+          {filters.map(obj => {
+            return (
+              <Chip
+                key={obj.value + 'Chip'} // Where will this matter?
+                variant={
+                  filterVariables.includes(obj.value) ? 'outlined' : 'default'
+                }
+                clickable={true}
+                label={obj.label}
+                onClick={() => {
+                  // May be a problem, as filterVariables will never again contain ''
+                  const newFilters = [...filterVariables].filter(
+                    index => index !== ''
+                  );
+                  if (newFilters.includes(obj.value)) {
+                    const index = newFilters.indexOf(obj.value);
+                    newFilters.splice(index, 1);
+                  } else {
+                    newFilters.push(obj.value);
+                  }
+                  setFilterVariables(newFilters);
+                }}
+              ></Chip>
+            );
+          })}
+        </div>
+        <div className={classes.emptySpace}>Empty Space</div>
+        <div>
+          <div className={classes.searchIconContainer}>
+            <SearchIcon className={classes.searchIcon} />
+          </div>
+          <OutlinedInput placeholder="Search"></OutlinedInput>
+        </div>
+      </div>
       <Table>
         <TableHead>
           <TableRow>
             {columns.map(obj => {
               return (
                 <TableCell
+                  key={obj.value + 'Cell'}
                   className={classes.tableCellHeader}
                   onClick={() => {
                     if (obj.value === sortVariable) {
@@ -126,17 +222,24 @@ const RecurringPaymentsTable = (): JSX.Element => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <div>
-            {loading ? <p> Loading...</p> : null}
+          <TableRow>
+            {loading ? (
+              <TableCell>
+                <p> Loading...</p>
+              </TableCell>
+            ) : null}
             {error ? (
               <p className={classes.errorText}>
                 There was an error making the request.
               </p>
             ) : null}
-          </div>
+          </TableRow>
           {response
             ? response.data.commitments.map(commitment => (
-                <RecurringPaymentsTableRow commitment={commitment} />
+                <RecurringPaymentsTableRow
+                  key={commitment.id}
+                  commitment={commitment}
+                />
               ))
             : null}
         </TableBody>

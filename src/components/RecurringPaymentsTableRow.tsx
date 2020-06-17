@@ -16,10 +16,15 @@ const useStyles = makeStyles(theme => {
     },
     checkCircle: {
       color: '#14FF52',
+      fontSize: 'medium',
+      marginRight: '5px',
     },
     alignCell: {
       display: 'flex',
       alignItems: 'center',
+    },
+    hiddenText: {
+      visibility: 'hidden',
     },
   };
 });
@@ -30,23 +35,29 @@ export interface RowProps {
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
-  const classes = useStyles();
+  const classes = useStyles(theme);
 
   const schedules = props.commitment.schedules[0];
 
   // Handles Date Formatting
-  let timestamp = schedules.nextPaymentTimestamp;
-  let date = moment(timestamp).format('L');
+  const timestamp = schedules.nextPaymentTimestamp;
+  const date = moment(timestamp).format('L');
 
-  let name = props.commitment.firstName + ' ' + props.commitment.lastName;
+  const name = props.commitment.firstName + ' ' + props.commitment.lastName;
 
-  let totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
+  const totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
     props.commitment.currency
   }`;
 
-  let nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
+  const nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
 
-  let status = schedules.status;
+  const status = schedules.status;
+
+  const fixCasing = (str: string) => {
+    return (
+      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
+    );
+  };
 
   return (
     <TableRow>
@@ -54,7 +65,10 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
         <div>{name}</div>
         <div>{props.commitment.email}</div>
       </TableCell>
-      <TableCell align="left">{totalGiving}</TableCell>
+      <TableCell align="left">
+        <div>{totalGiving}</div>
+        <div className={classes.hiddenText}>Ghost Text</div>
+      </TableCell>
       <TableCell className={classes.flexCell} align="left">
         <div>{date}</div>
         <div>{nextPayment}</div>
@@ -64,8 +78,9 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
           {status === 'ACTIVE' ? (
             <CheckCircleOutlineIcon className={classes.checkCircle} />
           ) : null}
-          {status}
+          {fixCasing(status)}
         </div>
+        <div className={classes.hiddenText}>Ghost Text</div>
       </TableCell>
     </TableRow>
   );
