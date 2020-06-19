@@ -10,9 +10,8 @@ import {
   Chip,
 } from '@material-ui/core';
 
-import OutlinedInput from '@material-ui/core/OutlinedInput';
+import SearchBar from '../elements/SearchBar';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import SearchIcon from '@material-ui/icons/Search';
 
 import theme from '../theme';
 
@@ -194,10 +193,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
         </div>
         <div className={classes.emptySpace}>Empty Space</div>
         <div>
-          <div className={classes.searchIconContainer}>
-            <SearchIcon className={classes.searchIcon} />
-          </div>
-          <OutlinedInput placeholder="Search"></OutlinedInput>
+          <SearchBar placeholder="Search" />
         </div>
       </div>
       <Table>
