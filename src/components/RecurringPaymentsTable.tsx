@@ -81,7 +81,6 @@ const useDebounce = (value, delay) => {
       clearTimeout(handler);
     };
   }, [value, delay]);
-  console.log(debouncedValue);
   return debouncedValue;
 };
 
@@ -216,7 +215,15 @@ const RecurringPaymentsTable = (): JSX.Element => {
         </div>
         <div className={classes.emptySpace}>Empty Space</div>
         <div>
-          <SearchBar placeholder="Search" />
+          <SearchBar
+            placeholder="Search"
+            value={inputString}
+            onChange={e => {
+              const value = (e as any).target.value;
+              setInputString(value);
+              setSearchString(value);
+            }}
+          />
         </div>
       </div>
       <Table>
