@@ -15,7 +15,5 @@
     "faker": "^4.1.0",
     "serialize-javascript": "^2.1.1"
   },
-  "devDependencies": {
-    "uuid": "^8.1.0"
-  }
+  "devDependencies": {}
 }

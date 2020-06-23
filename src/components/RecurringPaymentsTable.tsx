@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -69,6 +69,22 @@ const useStyles = makeStyles(theme => {
   };
 });
 
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  console.log(debouncedValue);
+  return debouncedValue;
+};
+
 export interface Pagination {
   totalCount: number;
   pageStart?: number;
@@ -106,9 +122,15 @@ export interface TableProps {
 const RecurringPaymentsTable = (): JSX.Element => {
   const classes = useStyles(theme);
 
+  let delay = 1000;
+
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
   const [filterVariables, setFilterVariables] = React.useState(['']);
+  const [searchString, setSearchString] = React.useState('');
+  const [inputString, setInputString] = React.useState('');
+
+  const debouncedSearchTerm = useDebounce(searchString, delay);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
@@ -116,6 +138,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
     sortField: sortVariable,
     sortDirection,
     statuses: filterVariables.join(','),
+    search: debouncedSearchTerm,
   };
 
   // This hook requests data from the mock server.

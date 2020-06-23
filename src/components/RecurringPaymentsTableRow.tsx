@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => {
 // This means that props is expecting a single argument, commitment, of imported type Commitment
 export interface RowProps {
   commitment: Commitment;
+  // onClick: (ev?: React.SyntheticEvent) => void;
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
