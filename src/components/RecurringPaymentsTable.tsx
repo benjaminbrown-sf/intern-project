@@ -128,8 +128,12 @@ const RecurringPaymentsTable = (): JSX.Element => {
   const [filterVariables, setFilterVariables] = React.useState(['']);
   const [searchString, setSearchString] = React.useState('');
   const [inputString, setInputString] = React.useState('');
+  const [displayingRow, setDisplayingRow] = React.useState(false);
+  const [transactionId, setTransactionId] = React.useState(0);
 
   const debouncedSearchTerm = useDebounce(searchString, delay);
+
+  const query = displayingRow ? `transactions/${transactionId}` : 'commitments';
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
@@ -143,9 +147,9 @@ const RecurringPaymentsTable = (): JSX.Element => {
   // This hook requests data from the mock server.
   // This component will re-render every time the state of this request changes:
   // when it sends the request, when it stops loading, when it has an error,
-  // when it has a result
+  // when it has a
 
-  const [response, loading, error] = useGet('commitments', queryParams);
+  const [response, loading, error] = useGet(query, queryParams);
 
   const columns = [
     {
@@ -182,95 +186,111 @@ const RecurringPaymentsTable = (): JSX.Element => {
   ];
 
   return (
-    <TableContainer component={Paper}>
-      <div className={classes.filterContainer}>
-        <div className={classes.filters}>
-          <FilterListIcon className={classes.filterIcon} />
-          Filter
-          {filters.map(obj => {
-            return (
-              <Chip
-                key={obj.value + 'Chip'} // Where will this matter?
-                variant={
-                  filterVariables.includes(obj.value) ? 'outlined' : 'default'
-                }
-                clickable={true}
-                label={obj.label}
-                onClick={() => {
-                  // May be a problem, as filterVariables will never again contain ''
-                  const newFilters = [...filterVariables].filter(
-                    index => index !== ''
-                  );
-                  if (newFilters.includes(obj.value)) {
-                    const index = newFilters.indexOf(obj.value);
-                    newFilters.splice(index, 1);
-                  } else {
-                    newFilters.push(obj.value);
-                  }
-                  setFilterVariables(newFilters);
-                }}
-              ></Chip>
-            );
-          })}
-        </div>
-        <div className={classes.emptySpace}>Empty Space</div>
-        <div>
-          <SearchBar
-            placeholder="Search"
-            value={inputString}
-            onChange={e => {
-              const value = (e as any).target.value;
-              setInputString(value);
-              setSearchString(value);
-            }}
-          />
-        </div>
-      </div>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {columns.map(obj => {
-              return (
-                <TableCell
-                  key={obj.value + 'Cell'}
-                  className={classes.tableCellHeader}
-                  onClick={() => {
-                    if (obj.value === sortVariable) {
-                      setSortDirection(sortDirection === 'ASC' ? 'DSC' : 'ASC');
+    <div>
+      {<div>displayingRow</div> ? (
+        response ? (
+          response.data
+        ) : null
+      ) : (
+        <TableContainer component={Paper}>
+          <div className={classes.filterContainer}>
+            <div className={classes.filters}>
+              <FilterListIcon className={classes.filterIcon} />
+              Filter
+              {filters.map(obj => {
+                return (
+                  <Chip
+                    key={obj.value + 'Chip'} // Where will this matter?
+                    variant={
+                      filterVariables.includes(obj.value)
+                        ? 'outlined'
+                        : 'default'
                     }
-                    setSortVariable(obj.value);
-                  }}
-                >
-                  {obj.label}
-                </TableCell>
-              );
-            })}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            {loading ? (
-              <TableCell>
-                <p> Loading...</p>
-              </TableCell>
-            ) : null}
-            {error ? (
-              <p className={classes.errorText}>
-                There was an error making the request.
-              </p>
-            ) : null}
-          </TableRow>
-          {response
-            ? response.data.commitments.map(commitment => (
-                <RecurringPaymentsTableRow
-                  key={commitment.id}
-                  commitment={commitment}
-                />
-              ))
-            : null}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                    clickable={true}
+                    label={obj.label}
+                    onClick={() => {
+                      // May be a problem, as filterVariables will never again contain ''
+                      const newFilters = [...filterVariables].filter(
+                        index => index !== ''
+                      );
+                      if (newFilters.includes(obj.value)) {
+                        const index = newFilters.indexOf(obj.value);
+                        newFilters.splice(index, 1);
+                      } else {
+                        newFilters.push(obj.value);
+                      }
+                      setFilterVariables(newFilters);
+                    }}
+                  ></Chip>
+                );
+              })}
+            </div>
+            <div className={classes.emptySpace}>Empty Space</div>
+            <div>
+              <SearchBar
+                placeholder="Search"
+                value={inputString}
+                onChange={e => {
+                  const value = (e as any).target.value;
+                  setInputString(value);
+                  setSearchString(value);
+                }}
+              />
+            </div>
+          </div>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {columns.map(obj => {
+                  return (
+                    <TableCell
+                      key={obj.value + 'Cell'}
+                      className={classes.tableCellHeader}
+                      onClick={() => {
+                        if (obj.value === sortVariable) {
+                          setSortDirection(
+                            sortDirection === 'ASC' ? 'DSC' : 'ASC'
+                          );
+                        }
+                        setSortVariable(obj.value);
+                      }}
+                    >
+                      {obj.label}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                {loading ? (
+                  <TableCell>
+                    <p> Loading...</p>
+                  </TableCell>
+                ) : null}
+                {error ? (
+                  <p className={classes.errorText}>
+                    There was an error making the request.
+                  </p>
+                ) : null}
+              </TableRow>
+              {response
+                ? response.data.commitments.map(commitment => (
+                    <RecurringPaymentsTableRow
+                      key={commitment.id}
+                      commitment={commitment}
+                      onClick={() => {
+                        setDisplayingRow(!displayingRow);
+                        setTransactionId(commitment.id);
+                      }}
+                    />
+                  ))
+                : null}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </div>
   );
 };
 

@@ -188,6 +188,25 @@ const generate = amount => {
   return commitments;
 };
 
+const getTransaction = id => {
+  let commitments;
+  try {
+    commitments = JSON.parse(fs.readFileSync(DATA_FILE));
+  } catch (e) {
+    log('Failed to load commitment file', e.stack);
+    return;
+  }
+
+  const l = commitments.length;
+  console.log(commitments[0]);
+  for (let i = 0; i < l; i++) {
+    if (commitments[i]['id'] === id) {
+      return commitments[i];
+    }
+  }
+  return -1;
+};
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -271,6 +290,15 @@ app.get('/generate', async (req, res) => {
   };
   fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
   res.send(JSON.stringify(resp));
+});
+
+app.get('/transactions/:transactionId', async (req, res) => {
+  log(`GET/transactions`, req.body);
+  const commitment = getTransaction(req.params.transactionId);
+  // Check if commitment was found
+  // commitment === -1 ?
+  res.send(commitment);
+  return;
 });
 
 try {
