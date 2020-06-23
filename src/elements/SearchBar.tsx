@@ -6,7 +6,7 @@ import SearchIcon from '@material-ui/icons/Search';
 interface InputProps {
   value?: string;
   placeholder?: string;
-  onChange?: (ev?: React.SyntheticEvent) => void;
+  onChange: (ev?: React.SyntheticEvent) => void;
   showSearchIcon?: boolean;
 }
 

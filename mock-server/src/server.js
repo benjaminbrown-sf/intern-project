@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const faker = require('faker');
-const uuid = require('uuid').v4;
 
 const PORT = 9998;
 const DATA_FILE = './commitments.json';
@@ -42,6 +41,15 @@ const EXAMPLE = {
       ],
     },
   ],
+};
+
+const randomId = () => {
+  const set = 'abcdefghijklmnopqrstuvwxyz1234567890';
+  let ret = '';
+  for (let i = 0; i < 10; i++) {
+    ret += set[Math.floor(Math.random() * set.length)];
+  }
+  return ret;
 };
 
 const log = function () {
@@ -153,7 +161,7 @@ const generateCommitment = () => {
   nextPayment.setMonth(nextPayment.getMonth() + 1);
   const commitment = {
     ...EXAMPLE.commitments[0],
-    id: uuid(),
+    id: randomId(),
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
@@ -162,7 +170,7 @@ const generateCommitment = () => {
     schedules: [
       {
         ...EXAMPLE.commitments[0].schedules[0],
-        id: uuid(),
+        id: randomId(),
         recurringAmount: amount,
         nextPaymentTimestamp: +nextPayment,
         status,
@@ -178,6 +186,25 @@ const generate = amount => {
     commitments.push(generateCommitment());
   }
   return commitments;
+};
+
+const getTransaction = id => {
+  let commitments;
+  try {
+    commitments = JSON.parse(fs.readFileSync(DATA_FILE));
+  } catch (e) {
+    log('Failed to load commitment file', e.stack);
+    return;
+  }
+
+  const l = commitments.length;
+  console.log(commitments[0]);
+  for (let i = 0; i < l; i++) {
+    if (commitments[i]['id'] === id) {
+      return commitments[i];
+    }
+  }
+  return -1;
 };
 
 const app = express();
@@ -263,6 +290,15 @@ app.get('/generate', async (req, res) => {
   };
   fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
   res.send(JSON.stringify(resp));
+});
+
+app.get('/transactions/:transactionId', async (req, res) => {
+  log(`GET/transactions`, req.body);
+  const commitment = getTransaction(req.params.transactionId);
+  // Check if commitment was found
+  // commitment === -1 ?
+  res.send(commitment);
+  return;
 });
 
 try {
