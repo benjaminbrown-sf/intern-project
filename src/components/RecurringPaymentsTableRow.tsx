@@ -32,13 +32,16 @@ const useStyles = makeStyles(theme => {
 // This means that props is expecting a single argument, commitment, of imported type Commitment
 export interface RowProps {
   commitment: Commitment;
-  onClick: (ev?: React.SyntheticEvent) => void;
+  displayId: number | null;
+  setDisplayId: any;
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const classes = useStyles(theme);
 
+  const { displayId, setDisplayId } = props;
   const schedules = props.commitment.schedules[0];
+  const { id } = props.commitment;
 
   // Handles Date Formatting
   const timestamp = schedules.nextPaymentTimestamp;
@@ -61,7 +64,11 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   };
 
   return (
-    <TableRow>
+    <TableRow
+      onClick={() => {
+        setDisplayId(id); // This should only go one direction
+      }}
+    >
       <TableCell className={classes.flexCell} align="left">
         <div>{name}</div>
         <div>{props.commitment.email}</div>

@@ -7,6 +7,7 @@ import {
 import theme from './theme';
 
 import RecurringPaymentsTable from './components/RecurringPaymentsTable';
+import CommitmentDetails from './components/CommitmentDetails';
 
 const MUITheme = createMuiTheme(theme);
 
@@ -42,6 +43,11 @@ const useAppStyles = makeStyles(theme => {
 
 const App = (): JSX.Element => {
   const classes = useAppStyles();
+
+  // This Hook is used to keep track of whether to render the table or CommitmentDetails
+  // const [displayDetails, setDisplayDetails] = React.useState(false);
+  // This Hook is used to keep track of which CommitmentDetails should be displayed
+  const [displayId, setDisplayId] = React.useState(null);
   return (
     <ThemeProvider theme={MUITheme}>
       <div className={classes.app}>
@@ -49,7 +55,17 @@ const App = (): JSX.Element => {
           <img src="logo.png" className={classes.appLogo} alt="logo" />
         </header>
         <div>
-          <RecurringPaymentsTable />
+          {displayId ? (
+            <CommitmentDetails
+              displayId={displayId}
+              setDisplayId={setDisplayId}
+            />
+          ) : (
+            <RecurringPaymentsTable
+              displayId={displayId}
+              setDisplayId={setDisplayId}
+            />
+          )}
         </div>
       </div>
     </ThemeProvider>
