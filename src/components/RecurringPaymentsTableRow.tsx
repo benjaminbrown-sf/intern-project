@@ -32,14 +32,13 @@ const useStyles = makeStyles(theme => {
 // This means that props is expecting a single argument, commitment, of imported type Commitment
 export interface RowProps {
   commitment: Commitment;
-  displayId: number | null;
-  setDisplayId: any;
+  setDisplayId: (displayId: string) => void;
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const classes = useStyles(theme);
 
-  const { displayId, setDisplayId } = props;
+  const { setDisplayId } = props;
   const schedules = props.commitment.schedules[0];
   const { id } = props.commitment;
 
@@ -66,7 +65,8 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   return (
     <TableRow
       onClick={() => {
-        setDisplayId(id); // This should only go one direction
+        setDisplayId('' + id); // This should only go one direction
+        window.location.hash = '' + id;
       }}
     >
       <TableCell className={classes.flexCell} align="left">

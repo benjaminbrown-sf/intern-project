@@ -112,12 +112,11 @@ export interface Commitment {
 }
 
 export interface TableProps {
-  displayId: number | null;
-  setDisplayId: any;
+  setDisplayId: (displayId: string) => void;
 }
 
 const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
-  const { displayId, setDisplayId } = props;
+  const { setDisplayId } = props;
 
   const classes = useStyles(theme);
 
@@ -264,7 +263,6 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
                 <RecurringPaymentsTableRow
                   key={commitment.id}
                   commitment={commitment}
-                  displayId={displayId}
                   setDisplayId={setDisplayId}
                 />
               ))

@@ -362,12 +362,11 @@ app.get('/generate', async (req, res) => {
 });
 
 app.get('/commitment/:commitmentId', async (req, res) => {
-  log(`GET/commitment`, req.body);
+  log(`GET/commitment`, req.params.commitmentId);
   const commitment = getCommitment(req.params.commitmentId);
-  // Check if commitment was found
-  // commitment === -1 ?
-  res.send(commitment);
-  return;
+  commitment
+    ? res.send(commitment)
+    : res.status(404).send(`No match found for: ${req.params.commitmentId}`);
 });
 
 try {
@@ -377,18 +376,6 @@ try {
   const commitments = generate(100);
   fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
 }
-
-app.get('*', function (req, res, next) {
-  // Reporting async errors *must* go through `next()`
-  setImmediate(() => {
-    next(new Error('woops'));
-  });
-});
-
-app.use(function (error, req, res, next) {
-  // Will get here
-  res.json({ message: error.message });
-});
 
 app.listen(PORT, () => {
   log(`Listening on port ${PORT}`);

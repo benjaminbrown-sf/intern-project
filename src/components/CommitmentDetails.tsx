@@ -4,13 +4,16 @@ import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
 
 import theme from '../theme';
 import { makeStyles } from '@material-ui/core/styles';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
 
+import { Button } from '@material-ui/core';
+
 export interface DetailProps {
-  displayId: string | '';
-  setDisplayId: (displayId: string | '') => void;
+  displayId: string;
+  setDisplayId: (displayId: string) => void;
 }
 
 const useStyles = makeStyles(theme => {
@@ -22,12 +25,21 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       flexDirection: 'row',
     },
+    pageTitle: {
+      textAlign: 'left',
+    },
   };
 });
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
   const { displayId, setDisplayId } = props;
+
+  const fixCasing = (str: string) => {
+    return (
+      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
+    );
+  };
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
@@ -39,10 +51,13 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     queryParams
   );
 
-  const data = response?.data;
-
   if (loading) {
     console.log('loading');
+    return <div></div>;
+  }
+  const data = response && response.data; // same response?.data
+
+  if (!data) {
     return <div></div>;
   }
 
@@ -61,6 +76,8 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     schedules,
     installments,
   } = data;
+
+  const { frequency } = schedules[0];
 
   const {
     origin,
@@ -96,11 +113,27 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       ) : (
         <div>
           <div>
-            <h2>Recurring Payments</h2>
+            <div className={classes.pageTitle}>
+              <h2>Recurring Payments</h2>
+              <Button></Button>
+            </div>
             <div className={classes.flexRow}>
-              <div>{`$ ${amountPaidToDate} ${currency}`}</div>
-              <div>{pledgeAmount}</div>
-              <div>{status}</div>
+              <div>{`$ ${amountPaidToDate} ${currency} Total`}</div>
+              {pledgeAmount !== null ? (
+                <div>{`$ ${pledgeAmount} ${currency} Per ${frequency}`}</div>
+              ) : null}
+
+              {status === 'ACTIVE' ? (
+                <div>
+                  <CheckCircleOutlineIcon />
+                  <div>{fixCasing(status)}</div>
+                </div>
+              ) : (
+                <div>
+                  <CheckCircleOutlineIcon />
+                  <div>{fixCasing(status)}</div>
+                </div>
+              )}
             </div>
             <div className={classes.flexRow}>
               <div>{`${firstName} ${lastName}`}</div>
@@ -121,6 +154,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
         <div
           onClick={() => {
             setDisplayId('');
+            window.location.hash = '';
           }}
         >
           {JSON.stringify(response.data)}

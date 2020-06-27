@@ -17,6 +17,8 @@ const useAppStyles = makeStyles(theme => {
   return {
     app: {
       textAlign: 'center',
+      marginLeft: '150px',
+      marginRight: '150px',
     },
     appHeader: {
       display: 'flex',
@@ -47,7 +49,9 @@ const App = (): JSX.Element => {
   // This Hook is used to keep track of whether to render the table or CommitmentDetails
   // const [displayDetails, setDisplayDetails] = React.useState(false);
   // This Hook is used to keep track of which CommitmentDetails should be displayed
-  const [displayId, setDisplayId] = React.useState('');
+  const [displayId, setDisplayId] = React.useState(
+    window.location.hash.slice(1) || ''
+  );
   return (
     <ThemeProvider theme={MUITheme}>
       <div className={classes.app}>
@@ -55,16 +59,13 @@ const App = (): JSX.Element => {
           <img src="logo.png" className={classes.appLogo} alt="logo" />
         </header>
         <div>
-          {displayId ? (
+          {displayId !== '' ? (
             <CommitmentDetails
               displayId={displayId}
               setDisplayId={setDisplayId}
             />
           ) : (
-            <RecurringPaymentsTable
-              displayId={displayId}
-              setDisplayId={setDisplayId}
-            />
+            <RecurringPaymentsTable setDisplayId={setDisplayId} />
           )}
         </div>
       </div>
