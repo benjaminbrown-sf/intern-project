@@ -9,8 +9,8 @@ import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
 
 export interface DetailProps {
-  displayId: number | null;
-  setDisplayId: any; // Terrible, but setStateAction<null> and Dispatch<setStateAction<null> are unrecognized
+  displayId: string | '';
+  setDisplayId: (displayId: string | '') => void;
 }
 
 const useStyles = makeStyles(theme => {
@@ -35,7 +35,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   };
 
   const [response, loading, error] = useGet(
-    `transactions/${displayId}`,
+    `commitment/${displayId}`,
     queryParams
   );
 
@@ -83,10 +83,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     recurringId: schedules[0].id,
   };
 
-  // installment destructuring
-
-  // schedules destructuring
-
   return (
     <div>
       {error ? (
@@ -124,7 +120,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       {response ? (
         <div
           onClick={() => {
-            setDisplayId(null);
+            setDisplayId('');
           }}
         >
           {JSON.stringify(response.data)}

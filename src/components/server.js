@@ -273,7 +273,7 @@ const getCommitment = id => {
       return commitments[i];
     }
   }
-  return false;
+  return -1;
 };
 
 const app = express();
@@ -361,14 +361,16 @@ app.get('/generate', async (req, res) => {
   res.send(JSON.stringify(resp));
 });
 
-app.get('/commitment/:commitmentId', async (req, res) => {
-  log(`GET/commitment`, req.body);
-  const commitment = getCommitment(req.params.commitmentId);
-  // Check if commitment was found
-  // commitment === -1 ?
-  res.send(commitment);
-  return;
-});
+app
+  .get('/commitment/:commitmentId', async (req, res) => {
+    log(`GET/commitment`, req.body);
+    const commitment = getCommitment(req.params.commitmentId);
+    // Check if commitment was found
+    // commitment === -1 ?
+    res.send(commitment);
+    return;
+  })
+  .catch();
 
 try {
   fs.readFileSync(DATA_FILE);
@@ -377,18 +379,6 @@ try {
   const commitments = generate(100);
   fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
 }
-
-app.get('*', function (req, res, next) {
-  // Reporting async errors *must* go through `next()`
-  setImmediate(() => {
-    next(new Error('woops'));
-  });
-});
-
-app.use(function (error, req, res, next) {
-  // Will get here
-  res.json({ message: error.message });
-});
 
 app.listen(PORT, () => {
   log(`Listening on port ${PORT}`);

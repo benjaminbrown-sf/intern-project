@@ -47,7 +47,7 @@ const App = (): JSX.Element => {
   // This Hook is used to keep track of whether to render the table or CommitmentDetails
   // const [displayDetails, setDisplayDetails] = React.useState(false);
   // This Hook is used to keep track of which CommitmentDetails should be displayed
-  const [displayId, setDisplayId] = React.useState(null);
+  const [displayId, setDisplayId] = React.useState('');
   return (
     <ThemeProvider theme={MUITheme}>
       <div className={classes.app}>
