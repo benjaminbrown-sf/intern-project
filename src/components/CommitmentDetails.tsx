@@ -17,7 +17,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
 
 import PaymentDetails from './PaymentDetails';
-import RecurringPayments from './RecurringPayments';
+import RecurringPayment from './RecurringPayment';
 
 const MUITheme = createMuiTheme(theme);
 
@@ -37,7 +37,6 @@ const useStyles = makeStyles(theme => {
     },
     pageTitle: {
       textAlign: 'left',
-      fontFamily: '"Roboto, Helvetica, Arial, sans-serif"',
     },
     iconContainer: {
       display: 'flex',
@@ -49,7 +48,7 @@ const useStyles = makeStyles(theme => {
       maxWidth: '400px',
       minWidth: '35%',
       justifyContent: 'space-between',
-      alignItem: 'center',
+      alignItems: 'center',
       marginBottom: '25px',
     },
     userContainer: {
@@ -92,9 +91,7 @@ const useStyles = makeStyles(theme => {
     paymentIcon: {
       fontSize: 'medium',
     },
-    CommitmentDetails: {
-      fontFamily: 'inherit',
-    },
+
     titleContainer: {
       display: 'flex',
       flexDirection: 'row',
@@ -171,7 +168,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   };
 
   return (
-    <div className={classes.CommitmentDetails}>
+    <div>
       {error ? (
         <p className={classes.errorText}>
           There was an error making the request.
@@ -189,7 +186,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
             }}
           >
             <div className={classes.titleContainer}>
-              <h2 className={classes.pageTitle}>Recurring Payments</h2>
+              <h2 className={classes.pageTitle}>Recurring Payment</h2>
               <Button
                 className={classes.cancelButton}
                 variant="contained"
@@ -200,9 +197,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               </Button>
             </div>
             <div className={classes.paymentContainer}>
-              <div className={classes.textBold}>{`$${
-                amountPaidToDate / 1000
-              } ${currency} Total`}</div>
+              <div
+                className={classes.textBold}
+              >{`$${amountPaidToDate} ${currency} Total`}</div>
               <div className={classes.textBold}>{`$${
                 recurringAmount / 1000
               } ${currency} Per ${fixCasing(frequency)}`}</div>
@@ -238,7 +235,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
           <Divider />
           <div className={classes.flexRow}>
             <PaymentDetails info={paymentDetails} />
-            <RecurringPayments
+            <RecurringPayment
               nextPayment={nextPaymentTimestamp}
               installments={installments}
               recurringAmount={recurringAmount}

@@ -28,6 +28,9 @@ export default {
     typography: {
       link: ColorLink,
       highlight: ColorHighlight,
+      fontFamily: ['"Roboto"', '"Helvetica"', '"Arial"', `sans-serif`].join(
+        ','
+      ),
     } as any,
   },
 };
