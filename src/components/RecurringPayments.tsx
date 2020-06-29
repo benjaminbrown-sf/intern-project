@@ -69,7 +69,7 @@ export interface RecurringPaymentProps {
   currency: string;
 }
 
-const RecurringPayment = (props: RecurringPaymentProps) => {
+const RecurringPayments = (props: RecurringPaymentProps) => {
   const classes = useStyles(theme);
   const { installments, nextPayment, recurringAmount, currency } = props;
 
@@ -139,4 +139,4 @@ const RecurringPayment = (props: RecurringPaymentProps) => {
   );
 };
 
-export default RecurringPayment;
+export default RecurringPayments;

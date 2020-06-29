@@ -17,7 +17,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
 
 import PaymentDetails from './PaymentDetails';
-import RecurringPayment from './RecurringPayment';
+import RecurringPayments from './RecurringPayments';
 
 const MUITheme = createMuiTheme(theme);
 
@@ -235,7 +235,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
           <Divider />
           <div className={classes.flexRow}>
             <PaymentDetails info={paymentDetails} />
-            <RecurringPayment
+            <RecurringPayments
               nextPayment={nextPaymentTimestamp}
               installments={installments}
               recurringAmount={recurringAmount}
