@@ -19,6 +19,7 @@ const useAppStyles = makeStyles(theme => {
       textAlign: 'center',
       marginLeft: '150px',
       marginRight: '150px',
+      fontFamily: 'Roboto, Helvetica, Arial, sans-serif,',
     },
     appHeader: {
       display: 'flex',

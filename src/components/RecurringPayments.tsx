@@ -3,6 +3,8 @@ import moment from 'moment';
 
 import theme from '../theme';
 
+import fixCasing from '../utils/fixCasing';
+
 import {
   Table,
   TableHead,
@@ -44,12 +46,6 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
     { label: 'Amount', value: 'AMOUNT' },
     { label: 'Actions', value: 'ACTIONS' },
   ];
-
-  const fixCasing = (str: string) => {
-    return (
-      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
-    );
-  };
 
   let i = 0;
 

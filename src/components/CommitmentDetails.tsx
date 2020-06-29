@@ -2,14 +2,18 @@ import React from 'react';
 
 import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
 
+import fixCasing from '../utils/fixCasing';
+
 import theme from '../theme';
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import PaymentIcon from '@material-ui/icons/Payment';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
 
-import { Button } from '@material-ui/core';
+// import { Button } from '@material-ui/core';
 
 export interface DetailProps {
   displayId: string;
@@ -27,6 +31,63 @@ const useStyles = makeStyles(theme => {
     },
     pageTitle: {
       textAlign: 'left',
+      fontFamily: 'Roboto, Helvetica, Arial, sans-serif,',
+    },
+    iconContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    paymentContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      maxWidth: '400px',
+      minWidth: '35%',
+      justifyContent: 'space-between',
+      alignItem: 'center',
+      marginBottom: '25px',
+    },
+    userContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      maxWidth: '50%',
+      minWidth: '500px',
+      textAlign: 'left',
+      marginBottom: '20px',
+      alignItems: 'center',
+    },
+    infoContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    cardContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      minWidth: '185px',
+      marginLeft: '13px',
+      marginBottom: '17px',
+    },
+    textBold: {
+      fontWeight: 'bold',
+    },
+    textLight: {
+      fontWeight: 'lighter',
+    },
+    checkCircle: {
+      color: '#14FF52',
+      fontSize: 'medium',
+      marginRight: '5px',
+    },
+    accountIcon: {
+      fontSize: 'medium',
+      marginBottom: '18px',
+      marginRight: '6px',
+    },
+    paymentIcon: {
+      fontSize: 'medium',
+    },
+    CommitmentDetails: {
+      fontFamily: 'inherit',
     },
   };
 });
@@ -34,12 +95,6 @@ const useStyles = makeStyles(theme => {
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
   const { displayId, setDisplayId } = props;
-
-  const fixCasing = (str: string) => {
-    return (
-      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
-    );
-  };
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
@@ -69,7 +124,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     lastName,
     email,
     amountPaidToDate,
-    pledgeAmount,
     currency,
     status,
     paymentMethod,
@@ -77,7 +131,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     installments,
   } = data;
 
-  const { frequency } = schedules[0];
+  const { frequency, recurringAmount } = schedules[0];
 
   const {
     origin,
@@ -101,7 +155,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   };
 
   return (
-    <div>
+    <div className={classes.CommitmentDetails}>
       {error ? (
         <p className={classes.errorText}>
           There was an error making the request.
@@ -115,33 +169,43 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
           <div>
             <div className={classes.pageTitle}>
               <h2>Recurring Payments</h2>
-              <Button></Button>
             </div>
-            <div className={classes.flexRow}>
-              <div>{`$ ${amountPaidToDate} ${currency} Total`}</div>
-              {pledgeAmount !== null ? (
-                <div>{`$ ${pledgeAmount} ${currency} Per ${frequency}`}</div>
-              ) : null}
-
+            <div className={classes.paymentContainer}>
+              <div className={classes.textBold}>{`$${
+                amountPaidToDate / 1000
+              } ${currency} Total`}</div>
+              <div
+                className={classes.textBold}
+              >{`$${recurringAmount} ${currency} Per ${fixCasing(
+                frequency
+              )}`}</div>
               {status === 'ACTIVE' ? (
-                <div>
-                  <CheckCircleOutlineIcon />
+                <div className={classes.iconContainer}>
+                  <CheckCircleOutlineIcon className={classes.checkCircle} />
                   <div>{fixCasing(status)}</div>
                 </div>
               ) : (
-                <div>
-                  <CheckCircleOutlineIcon />
+                <div className={classes.iconContainer}>
+                  <CheckCircleOutlineIcon className={classes.checkCircle} />
                   <div>{fixCasing(status)}</div>
                 </div>
               )}
             </div>
-            <div className={classes.flexRow}>
-              <div>{`${firstName} ${lastName}`}</div>
-              <div>{email}</div>
-            </div>
-            <div className={classes.flexRow}>
-              <div>{`${card}, *${Math.floor(lastFour)}`}</div>
-              <div>{`Exp. ${expiration}`}</div>
+            <div className={classes.userContainer}>
+              <AccountCircleIcon className={classes.accountIcon} />
+              <div className={classes.infoContainer}>
+                <div className={classes.textBold}>
+                  {`${firstName} ${lastName}`}
+                </div>
+                <div className={classes.textLight}>{email}</div>
+              </div>
+              <div className={classes.cardContainer}>
+                <PaymentIcon className={classes.paymentIcon} />
+                <div className={classes.textBold}>{`${fixCasing(
+                  card
+                )}, *${Math.floor(lastFour)}`}</div>
+                <div className={classes.textLight}>{`Exp. ${expiration}`}</div>
+              </div>
             </div>
           </div>
           <div className={classes.flexRow}>

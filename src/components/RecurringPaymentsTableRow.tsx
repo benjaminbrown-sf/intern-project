@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
+import fixCasing from '../utils/fixCasing';
+
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { makeStyles } from '@material-ui/core/styles';
@@ -52,15 +54,11 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
     props.commitment.currency
   }`;
 
-  const nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
+  const nextPayment = `$${schedules.recurringAmount / 1000} ${
+    props.commitment.currency
+  } / ${schedules.frequency}`;
 
   const status = schedules.status;
-
-  const fixCasing = (str: string) => {
-    return (
-      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
-    );
-  };
 
   return (
     <TableRow
