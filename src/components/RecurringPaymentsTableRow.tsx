@@ -50,9 +50,7 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
 
   const name = props.commitment.firstName + ' ' + props.commitment.lastName;
 
-  const totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
-    props.commitment.currency
-  }`;
+  const totalGiving = `$${props.commitment.amountPaidToDate} ${props.commitment.currency}`;
 
   const nextPayment = `$${schedules.recurringAmount / 1000} ${
     props.commitment.currency
