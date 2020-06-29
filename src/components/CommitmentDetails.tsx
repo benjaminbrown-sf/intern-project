@@ -5,7 +5,13 @@ import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
 import fixCasing from '../utils/fixCasing';
 
 import theme from '../theme';
-import { makeStyles } from '@material-ui/core/styles';
+
+import {
+  createMuiTheme,
+  ThemeProvider,
+  makeStyles,
+} from '@material-ui/core/styles';
+import { Divider, Button } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
@@ -13,7 +19,7 @@ import PaymentIcon from '@material-ui/icons/Payment';
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
 
-// import { Button } from '@material-ui/core';
+const MUITheme = createMuiTheme(theme);
 
 export interface DetailProps {
   displayId: string;
@@ -31,7 +37,7 @@ const useStyles = makeStyles(theme => {
     },
     pageTitle: {
       textAlign: 'left',
-      fontFamily: 'Roboto, Helvetica, Arial, sans-serif,',
+      fontFamily: '"Roboto, Helvetica, Arial, sans-serif"',
     },
     iconContainer: {
       display: 'flex',
@@ -89,6 +95,14 @@ const useStyles = makeStyles(theme => {
     CommitmentDetails: {
       fontFamily: 'inherit',
     },
+    titleContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    cancelButton: {
+      height: '50%',
+    },
   };
 });
 
@@ -116,6 +130,8 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     return <div></div>;
   }
 
+  console.log(JSON.stringify(response?.data));
+
   const {
     id,
     creationTimestamp,
@@ -131,7 +147,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     installments,
   } = data;
 
-  const { frequency, recurringAmount } = schedules[0];
+  const { frequency, recurringAmount, nextPaymentTimestamp } = schedules[0];
 
   const {
     origin,
@@ -165,20 +181,31 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div>
-          <div>
-            <div className={classes.pageTitle}>
-              <h2>Recurring Payments</h2>
+        <ThemeProvider theme={MUITheme}>
+          <div
+            onClick={() => {
+              setDisplayId('');
+              window.location.hash = '';
+            }}
+          >
+            <div className={classes.titleContainer}>
+              <h2 className={classes.pageTitle}>Recurring Payments</h2>
+              <Button
+                className={classes.cancelButton}
+                variant="contained"
+                color="primary"
+                size="medium"
+              >
+                {fixCasing('Cancel Recurring Donation')}
+              </Button>
             </div>
             <div className={classes.paymentContainer}>
               <div className={classes.textBold}>{`$${
                 amountPaidToDate / 1000
               } ${currency} Total`}</div>
-              <div
-                className={classes.textBold}
-              >{`$${recurringAmount} ${currency} Per ${fixCasing(
-                frequency
-              )}`}</div>
+              <div className={classes.textBold}>{`$${
+                recurringAmount / 1000
+              } ${currency} Per ${fixCasing(frequency)}`}</div>
               {status === 'ACTIVE' ? (
                 <div className={classes.iconContainer}>
                   <CheckCircleOutlineIcon className={classes.checkCircle} />
@@ -208,22 +235,18 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               </div>
             </div>
           </div>
+          <Divider />
           <div className={classes.flexRow}>
             <PaymentDetails info={paymentDetails} />
-            <RecurringPayments installments={installments} />
+            <RecurringPayments
+              nextPayment={nextPaymentTimestamp}
+              installments={installments}
+              recurringAmount={recurringAmount}
+              currency={currency}
+            />
           </div>
-        </div>
+        </ThemeProvider>
       )}
-      {response ? (
-        <div
-          onClick={() => {
-            setDisplayId('');
-            window.location.hash = '';
-          }}
-        >
-          {JSON.stringify(response.data)}
-        </div>
-      ) : null}
     </div>
   );
 };

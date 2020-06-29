@@ -33,9 +33,25 @@ const useStyles = makeStyles(theme => {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    // paymentContainer: {
-
-    // }
+    paymentContainer: {
+      maxWidth: '50%',
+      textAlign: 'left',
+      minWidth: '600px',
+    },
+    detailRow: {
+      display: 'flex',
+      flexDirection: 'row',
+      marginBottom: '5px',
+    },
+    detailValue: {
+      textAlign: 'left',
+      marginLeft: '10px',
+    },
+    detailKey: {
+      wordWrap: 'break-word',
+      width: '130px',
+      alignSelf: 'flex-start',
+    },
   };
 });
 
@@ -53,42 +69,61 @@ const PaymentDetails = (props: PaymentDetailProps): JSX.Element => {
     recurringId,
   } = props.info;
 
+  const ct = moment(creationTimestamp).format('L');
+  const st = moment(startedTimestamp).format('L');
+
+  const details = [
+    {
+      label: 'Origin',
+      value: origin,
+    },
+    {
+      label: 'Origin Name',
+      value: originName,
+    },
+    {
+      label: 'Origin ID',
+      value: id,
+    },
+    {
+      label: 'Payment Gateway',
+      value: paymentGateway,
+    },
+    {
+      label: 'Payment Gateway Nickname',
+      value: paymentGatewayNickname,
+    },
+    {
+      label: 'Created',
+      value: ct,
+    },
+    {
+      label: 'Started',
+      value: st,
+    },
+    {
+      label: 'Recurring ID',
+      value: recurringId,
+    },
+  ];
+
+  let i = 0;
+
   return (
     <ThemeProvider theme={MUITheme}>
-      <div>
-        <h5>Payment Details</h5>
-        <div className={classes.cellContainer}>
-          <div>Origin</div>
-          <div>{origin}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Origin Name</div>
-          <div>{originName}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Origin ID</div>
-          <div>{id}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Payment Gateway</div>
-          <div>{paymentGateway}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Payment Gateway Nickname</div>
-          <div>{paymentGatewayNickname}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Created</div>
-          <div>{moment(creationTimestamp).format('L')}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Started</div>
-          <div>{moment(startedTimestamp).format('L')}</div>
-        </div>
-        <div className={classes.cellContainer}>
-          <div>Recurring ID</div>
-          <div>{recurringId}</div>
-        </div>
+      <div className={classes.paymentContainer}>
+        <h3>Payment Details</h3>
+        {details.map(item => {
+          return (
+            <div
+              className={classes.detailRow}
+              key={`detailValue-${item.label}-${++i}`}
+            >
+              <div className={classes.detailKey}>{item.label}</div>
+              <div className={classes.detailValue}>{item.value}</div>
+            </div>
+          );
+        })}
       </div>
     </ThemeProvider>
   );

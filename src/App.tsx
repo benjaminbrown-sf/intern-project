@@ -19,7 +19,6 @@ const useAppStyles = makeStyles(theme => {
       textAlign: 'center',
       marginLeft: '150px',
       marginRight: '150px',
-      fontFamily: 'Roboto, Helvetica, Arial, sans-serif,',
     },
     appHeader: {
       display: 'flex',
@@ -45,7 +44,7 @@ const useAppStyles = makeStyles(theme => {
 });
 
 const App = (): JSX.Element => {
-  const classes = useAppStyles();
+  const classes = useAppStyles(theme);
 
   // This Hook is used to keep track of whether to render the table or CommitmentDetails
   // const [displayDetails, setDisplayDetails] = React.useState(false);
