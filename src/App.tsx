@@ -7,6 +7,7 @@ import {
 import theme from './theme';
 
 import RecurringPaymentsTable from './components/RecurringPaymentsTable';
+import CommitmentDetails from './components/CommitmentDetails';
 
 const MUITheme = createMuiTheme(theme);
 
@@ -16,6 +17,8 @@ const useAppStyles = makeStyles(theme => {
   return {
     app: {
       textAlign: 'center',
+      marginLeft: '150px',
+      marginRight: '150px',
     },
     appHeader: {
       display: 'flex',
@@ -24,6 +27,7 @@ const useAppStyles = makeStyles(theme => {
       justifyContent: 'center',
       fontSize: 'calc(10px + 2vmin)',
       color: 'white',
+      marginBottom: '16px',
     },
     appLogo: {
       height: '100px',
@@ -41,7 +45,15 @@ const useAppStyles = makeStyles(theme => {
 });
 
 const App = (): JSX.Element => {
-  const classes = useAppStyles();
+  const classes = useAppStyles(theme);
+
+  // This Hook is used to keep track of whether to render the table or CommitmentDetails
+  // const [displayDetails, setDisplayDetails] = React.useState(false);
+  // This Hook is used to keep track of which CommitmentDetails should be displayed
+  const [displayId, setDisplayId] = React.useState(
+    window.location.hash.slice(1) || ''
+  );
+
   return (
     <ThemeProvider theme={MUITheme}>
       <div className={classes.app}>
@@ -49,7 +61,14 @@ const App = (): JSX.Element => {
           <img src="logo.png" className={classes.appLogo} alt="logo" />
         </header>
         <div>
-          <RecurringPaymentsTable />
+          {displayId !== '' ? (
+            <CommitmentDetails
+              displayId={displayId}
+              setDisplayId={setDisplayId}
+            />
+          ) : (
+            <RecurringPaymentsTable setDisplayId={setDisplayId} />
+          )}
         </div>
       </div>
     </ThemeProvider>

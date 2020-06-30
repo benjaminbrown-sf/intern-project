@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   Chip,
 } from '@material-ui/core';
 
-import SearchBar from '../elements/SearchBar';
+import TextInput from '../elements/TextInput';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 import theme from '../theme';
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => {
   return {
     columnHeader: {
       fontWeight: 'bold',
-      color: '#21007F',
+      color: theme.palette.primary.main,
     },
     tableCellHeader: {
       cursor: 'pointer',
@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => {
       alignItems: 'center',
       width: '350px', // Especially not married to this
     },
-    searchBar: {
+    TextInput: {
       justifyContent: 'right',
       borderRadius: theme.shape.borderRadius,
     },
@@ -68,6 +68,24 @@ const useStyles = makeStyles(theme => {
     },
   };
 });
+
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+  useEffect(
+    () => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    [value, delay]
+  );
+  return debouncedValue;
+};
 
 export interface Pagination {
   totalCount: number;
@@ -97,18 +115,23 @@ export interface Commitment {
 }
 
 export interface TableProps {
-  response: {
-    pagination: Pagination;
-    commitments: Commitment[];
-  };
+  setDisplayId: (displayId: string) => void;
 }
 
-const RecurringPaymentsTable = (): JSX.Element => {
+const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
+  const { setDisplayId } = props;
+
   const classes = useStyles(theme);
+
+  const delay = 1000;
 
   const [sortDirection, setSortDirection] = React.useState('ASC');
   const [sortVariable, setSortVariable] = React.useState('firstName');
   const [filterVariables, setFilterVariables] = React.useState(['']);
+  const [searchString, setSearchString] = React.useState('');
+  const [inputString, setInputString] = React.useState('');
+
+  const debouncedSearchTerm = useDebounce(searchString, delay);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 10,
@@ -116,12 +139,13 @@ const RecurringPaymentsTable = (): JSX.Element => {
     sortField: sortVariable,
     sortDirection,
     statuses: filterVariables.join(','),
+    search: debouncedSearchTerm,
   };
 
   // This hook requests data from the mock server.
   // This component will re-render every time the state of this request changes:
   // when it sends the request, when it stops loading, when it has an error,
-  // when it has a result
+  // when it has a
 
   const [response, loading, error] = useGet('commitments', queryParams);
 
@@ -175,7 +199,6 @@ const RecurringPaymentsTable = (): JSX.Element => {
                 clickable={true}
                 label={obj.label}
                 onClick={() => {
-                  // May be a problem, as filterVariables will never again contain ''
                   const newFilters = [...filterVariables].filter(
                     index => index !== ''
                   );
@@ -187,13 +210,21 @@ const RecurringPaymentsTable = (): JSX.Element => {
                   }
                   setFilterVariables(newFilters);
                 }}
-              ></Chip>
+              />
             );
           })}
         </div>
         <div className={classes.emptySpace}>Empty Space</div>
         <div>
-          <SearchBar placeholder="Search" />
+          <TextInput
+            placeholder="Search"
+            value={inputString}
+            onChange={e => {
+              const value = (e as any).target.value;
+              setInputString(value);
+              setSearchString(value);
+            }}
+          />
         </div>
       </div>
       <Table>
@@ -235,6 +266,7 @@ const RecurringPaymentsTable = (): JSX.Element => {
                 <RecurringPaymentsTableRow
                   key={commitment.id}
                   commitment={commitment}
+                  setDisplayId={setDisplayId}
                 />
               ))
             : null}

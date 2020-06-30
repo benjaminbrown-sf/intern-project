@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const faker = require('faker');
-const uuid = require('uuid').v4;
 
 const PORT = 9998;
 const DATA_FILE = './commitments.json';
@@ -23,7 +22,9 @@ const EXAMPLE = {
   commitments: [
     {
       organizationId: 12363,
-      id: '21d79074-f01c-40cd-a74e-93fa758e5568',
+      id: '21d79074-f01c-40cd-a74e-93fa758e5568', // Origin ID
+      creationTimestamp: '',
+      startedTimestamp: '',
       firstName: 'Benjamin',
       lastName: 'Brown',
       email: 'benjamin.t.brown@hotmail.com',
@@ -31,17 +32,46 @@ const EXAMPLE = {
       pledgeAmount: null,
       currency: 'USD',
       status: 'ACTIVE',
+      paymentMethod: {
+        origin: 'Giving Page',
+        originName: "Benjamin's QA3 Giving Page",
+        paymentGateway: 'SFDO Test',
+        paymentGatewayNickname: 'ben',
+        card: 'VISA',
+        lastFour: 1111,
+        expiration: '01/2021',
+      },
       schedules: [
         {
-          id: '5dc7236e-9b2a-4d5b-92c1-c59b86120b06',
+          id: '5dc7236e-9b2a-4d5b-92c1-c59b86120b06', // Recurring ID
           nextPaymentTimestamp: '2020-07-04T09:35:00Z',
           recurringAmount: 1000,
           frequency: 'MONTH',
-          status: 'ACTIVE',
+          status: 'ACTIVE', // Succeeded?
         },
       ],
+      installments: [
+        {
+          date: '2020-07-04T09:35:00Z',
+          status: 'SUCCEEDED',
+          amount: 10,
+          currency: 'USD',
+        },
+      ],
+      customFields: {
+        blarg: 'honk',
+      },
     },
   ],
+};
+
+const randomId = () => {
+  const set = 'abcdefghijklmnopqrstuvwxyz1234567890';
+  let ret = '';
+  for (let i = 0; i < 10; i++) {
+    ret += set[Math.floor(Math.random() * set.length)];
+  }
+  return ret;
 };
 
 const log = function () {
@@ -140,6 +170,43 @@ const sortCommitments = (commitments, field, direction) => {
   });
 };
 
+const generateInstallment = () => {
+  const status =
+    Math.random() > 0.15
+      ? STATUS_ACTIVE
+      : Math.random() > 0.5
+      ? STATUS_CANCELED
+      : STATUS_STOPPED;
+  const amount = faker.finance.amount();
+  const currency = 'USD';
+  const installmentDate = faker.date.past();
+  return {
+    date: installmentDate,
+    status,
+    amount,
+    currency,
+  };
+};
+
+const generatePaymentMethod = () => {
+  const origin = faker.finance.account();
+  const originName = faker.finance.accountName();
+  const paymentGateway = 'SFDO Test';
+  const paymentGatewayNickname = 'SFDO';
+  const card = 'VISA';
+  const lastFour = Math.floor(Math.random() * 10000); // Doesn't seem to work right
+  const expiration = '01/21';
+  return {
+    origin,
+    originName,
+    paymentGateway,
+    paymentGatewayNickname,
+    card,
+    lastFour,
+    expiration,
+  };
+};
+
 const generateCommitment = () => {
   const nextPayment = new Date();
   const status =
@@ -151,23 +218,33 @@ const generateCommitment = () => {
   const amount = Math.floor(Math.random() * 250) * 1000;
   const numMonthsPaid = 1 + Math.floor(Math.random() * 12);
   nextPayment.setMonth(nextPayment.getMonth() + 1);
+  const creationTimestamp = faker.date.past();
+  const startedTimestamp = faker.date.recent();
+  const installment = generateInstallment();
+  const paymentMethod = generatePaymentMethod();
+
   const commitment = {
     ...EXAMPLE.commitments[0],
-    id: uuid(),
+    id: randomId(),
+    creationTimestamp: creationTimestamp,
+    startedTimestamp: startedTimestamp,
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
-    amountPaidToDate: amount * numMonthsPaid,
+    amountPaidToDate: (amount * numMonthsPaid) / 1000,
     status: status,
+    paymentMethod: paymentMethod,
     schedules: [
       {
         ...EXAMPLE.commitments[0].schedules[0],
-        id: uuid(),
+        id: randomId(),
         recurringAmount: amount,
         nextPaymentTimestamp: +nextPayment,
         status,
       },
     ],
+    installments: [installment],
+    customFields: {},
   };
   return commitment;
 };
@@ -178,6 +255,25 @@ const generate = amount => {
     commitments.push(generateCommitment());
   }
   return commitments;
+};
+
+const getCommitment = id => {
+  let commitments;
+  try {
+    commitments = JSON.parse(fs.readFileSync(DATA_FILE));
+  } catch (e) {
+    log('Failed to load commitment file', e.stack);
+    return;
+  }
+
+  const l = commitments.length;
+  console.log(commitments[0]);
+  for (let i = 0; i < l; i++) {
+    if (commitments[i]['id'] === id) {
+      return commitments[i];
+    }
+  }
+  return false;
 };
 
 const app = express();
@@ -263,6 +359,14 @@ app.get('/generate', async (req, res) => {
   };
   fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
   res.send(JSON.stringify(resp));
+});
+
+app.get('/commitment/:commitmentId', async (req, res) => {
+  log(`GET/commitment`, req.params.commitmentId);
+  const commitment = getCommitment(req.params.commitmentId);
+  commitment
+    ? res.send(commitment)
+    : res.status(404).send(`No match found for: ${req.params.commitmentId}`);
 });
 
 try {

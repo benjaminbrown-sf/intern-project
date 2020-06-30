@@ -1,10 +1,12 @@
 import React from 'react';
 import moment from 'moment';
 
+import fixCasing from '../utils/fixCasing';
+
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { makeStyles } from '@material-ui/core/styles';
-import theme from '../theme'; // Temporary
+import theme from '../theme';
 
 import { Commitment } from './RecurringPaymentsTable';
 
@@ -15,7 +17,7 @@ const useStyles = makeStyles(theme => {
       flexDirection: 'column',
     },
     checkCircle: {
-      color: '#14FF52',
+      color: theme.palette.success.main,
       fontSize: 'medium',
       marginRight: '5px',
     },
@@ -32,12 +34,15 @@ const useStyles = makeStyles(theme => {
 // This means that props is expecting a single argument, commitment, of imported type Commitment
 export interface RowProps {
   commitment: Commitment;
+  setDisplayId: (displayId: string) => void;
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const classes = useStyles(theme);
 
+  const { setDisplayId } = props;
   const schedules = props.commitment.schedules[0];
+  const { id } = props.commitment;
 
   // Handles Date Formatting
   const timestamp = schedules.nextPaymentTimestamp;
@@ -45,22 +50,21 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
 
   const name = props.commitment.firstName + ' ' + props.commitment.lastName;
 
-  const totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
-    props.commitment.currency
-  }`;
+  const totalGiving = `$${props.commitment.amountPaidToDate} ${props.commitment.currency}`;
 
-  const nextPayment = `$${schedules.recurringAmount} ${props.commitment.currency} / ${schedules.frequency}`;
+  const nextPayment = `$${schedules.recurringAmount / 1000} ${
+    props.commitment.currency
+  } / ${schedules.frequency}`;
 
   const status = schedules.status;
 
-  const fixCasing = (str: string) => {
-    return (
-      str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
-    );
-  };
-
   return (
-    <TableRow>
+    <TableRow
+      onClick={() => {
+        setDisplayId('' + id); // This should only go one direction
+        window.location.hash = '' + id;
+      }}
+    >
       <TableCell className={classes.flexCell} align="left">
         <div>{name}</div>
         <div>{props.commitment.email}</div>
