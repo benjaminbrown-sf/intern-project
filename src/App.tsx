@@ -53,7 +53,7 @@ const App = (): JSX.Element => {
   const [displayId, setDisplayId] = React.useState(
     window.location.hash.slice(1) || ''
   );
-  // const [history, setHistory] = React.useState([]);
+  const [history, setHistory] = React.useState([] as string[]);
 
   return (
     <ThemeProvider theme={MUITheme}>
@@ -66,9 +66,15 @@ const App = (): JSX.Element => {
             <CommitmentDetails
               displayId={displayId}
               setDisplayId={setDisplayId}
+              history={history}
+              setHistory={setHistory}
             />
           ) : (
-            <RecurringPaymentsTable setDisplayId={setDisplayId} />
+            <RecurringPaymentsTable
+              history={history}
+              setHistory={setHistory}
+              setDisplayId={setDisplayId}
+            />
           )}
         </div>
       </div>

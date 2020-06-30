@@ -21,6 +21,8 @@ import RecurringPayments from './RecurringPayments';
 export interface DetailProps {
   displayId: string;
   setDisplayId: (displayId: string) => void;
+  history: string[];
+  setHistory: (history: string[]) => void;
 }
 
 const useStyles = makeStyles(theme => {
@@ -106,7 +108,7 @@ const useStyles = makeStyles(theme => {
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
-  const { displayId, setDisplayId } = props;
+  const { displayId, setDisplayId, setHistory, history } = props;
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
@@ -188,8 +190,13 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                 <Button>
                   <ArrowBackIcon
                     onClick={() => {
-                      setDisplayId('');
-                      window.location.hash = '';
+                      const newHistory = history; // Done so as to not mutate history, but will still do so if this is a shallow copy
+                      const href = newHistory.pop();
+                      setHistory(newHistory);
+                      window.location.assign(href);
+                      // Original
+                      // setDisplayId('');
+                      // window.location.hash = '';
                     }}
                   />
                 </Button>

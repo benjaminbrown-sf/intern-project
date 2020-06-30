@@ -35,12 +35,14 @@ const useStyles = makeStyles(theme => {
 export interface RowProps {
   commitment: Commitment;
   setDisplayId: (displayId: string) => void;
+  history: string[];
+  setHistory: (history: string[]) => void;
 }
 
 const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const classes = useStyles(theme);
 
-  const { setDisplayId } = props;
+  const { setDisplayId, setHistory, history } = props;
   const schedules = props.commitment.schedules[0];
   const { id } = props.commitment;
 
@@ -61,8 +63,9 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   return (
     <TableRow
       onClick={() => {
-        setDisplayId('' + id); // This should only go one direction
-        window.location.hash = '' + id;
+        // window.location.hash = '' + id;
+        setHistory([...history, window.location.href]);
+        setDisplayId('' + id);
       }}
     >
       <TableCell className={classes.flexCell} align="left">

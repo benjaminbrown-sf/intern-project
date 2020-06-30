@@ -72,18 +72,15 @@ const useStyles = makeStyles(theme => {
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
 
-  useEffect(
-    () => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
 
-      return () => {
-        clearTimeout(handler);
-      };
-    },
-    [value, delay]
-  );
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
   return debouncedValue;
 };
 
@@ -116,10 +113,12 @@ export interface Commitment {
 
 export interface TableProps {
   setDisplayId: (displayId: string) => void;
+  history: string[];
+  setHistory: (history: string[]) => void;
 }
 
 const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
-  const { setDisplayId } = props;
+  const { setDisplayId, setHistory, history } = props;
 
   const classes = useStyles(theme);
 
@@ -267,6 +266,8 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
                   key={commitment.id}
                   commitment={commitment}
                   setDisplayId={setDisplayId}
+                  setHistory={setHistory}
+                  history={history}
                 />
               ))
             : null}
