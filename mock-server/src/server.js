@@ -280,25 +280,25 @@ app.post('/commitment/:commitmentId', async (req, res) => {
   }
 });
 
-// Refund a commitment by commitment id
-app.post('/commitment/refund/:commitmentId', async (req, res) => {
-  log('POST/commitment', req.prams.commitmentId);
-  let { commitmentId } = req.params;
-  const commitment = getCommitment(commitmentId);
+// Refund a transaction by transaction id
+app.post('/transaction/refund/:transactionId', async (req, res) => {
+  log('POST/transaction', req.prams.transactionId);
+  let { transactionId } = req.params;
+  const transaction = getTransaction(transactionId);
 
-  if (commitment) {
-    if (commitment.status === STATUS_STOPPED) {
+  if (transaction) {
+    if (transaction.status === STATUS_REFUNDED) {
       res
         .status(STATUS_CODE_BAD_REQUEST)
-        .send('Specified commitment has already been refunded.');
+        .send('Specified transaction has already been refunded.');
       return;
     }
-    commitment.status = STATUS_REFUNDED;
-    res.send(commitment);
+    transaction.status = STATUS_REFUNDED;
+    res.send(transaction);
   } else {
     res
       .status(STATUS_CODE_NOT_FOUND)
-      .send(`No match found for commitment id: ${commitmentId}`);
+      .send(`No match found for transaction id: ${transactionId}`);
   }
 });
 
