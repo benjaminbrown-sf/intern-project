@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core/styles';
 import { Divider, Button } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import LoopIcon from '@material-ui/icons/Loop';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
 
@@ -118,8 +119,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   );
 
   if (loading) {
-    console.log('loading');
-    return <div></div>;
+    return <LoopIcon />;
   }
   const data = response && response.data; // same response?.data
 
@@ -164,9 +164,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     startedTimestamp,
     recurringId: schedules[0].id,
   };
-
-  console.log('CommitmentDetails Theme:', theme);
-  console.log('MUITheme:', MUITheme);
 
   return (
     <div>
