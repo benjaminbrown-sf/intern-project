@@ -85,8 +85,6 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
     { label: 'Actions', value: 'ACTIONS' },
   ];
 
-  let i = 0;
-
   return (
     <div className={classes.recurringContainer}>
       <h3 className={classes.title}>Recurring Payments</h3>
@@ -99,11 +97,11 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
       <Table className={classes.paymentsTable}>
         <TableHead>
           <TableRow>
-            {tableHeaders.map(header => {
+            {tableHeaders.map((header, i) => {
               return (
                 <TableCell
                   className={classes.textBold}
-                  key={`TableHeader-${header.value}+`}
+                  key={`TableHeader-${header.value}+${i}`}
                 >
                   {header.label}
                 </TableCell>
@@ -112,11 +110,11 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {installments.map(installment => {
+          {installments.map((installment, i) => {
             return (
               <TableRow
                 className={classes.alignRow}
-                key={`RecurringPayment-${++i}-row`}
+                key={`RecurringPayment-${i}-row`}
               >
                 <TableCell key={`RecurringPayment-${i}-date`}>
                   {moment(installment.date).format('L')}

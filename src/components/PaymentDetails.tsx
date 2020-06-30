@@ -101,16 +101,14 @@ const PaymentDetails = (props: PaymentDetailProps): JSX.Element => {
     },
   ];
 
-  let i = 0;
-
   return (
     <div className={classes.paymentContainer}>
       <h3>Payment Details</h3>
-      {details.map(item => {
+      {details.map((item, i) => {
         return (
           <div
             className={classes.detailRow}
-            key={`detailValue-${item.label}-${++i}`}
+            key={`detailValue-${item.label}-${i}`}
           >
             <div className={classes.detailKey}>{item.label}</div>
             <div className={classes.detailValue}>{item.value}</div>

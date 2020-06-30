@@ -115,6 +115,11 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   if (loading) {
     return <LoopIcon />;
   }
+
+  if (error) {
+    console.error('An error has occurred with the Get Request');
+  }
+
   const data = response && response.data; // same response?.data
 
   if (!data) {
