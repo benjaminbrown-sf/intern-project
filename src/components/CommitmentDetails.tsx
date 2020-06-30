@@ -18,11 +18,6 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
 
-export interface DetailProps {
-  displayId: string;
-  setDisplayId: (displayId: string) => void;
-}
-
 const useStyles = makeStyles(theme => {
   return {
     errorText: {
@@ -34,6 +29,7 @@ const useStyles = makeStyles(theme => {
     },
     pageTitle: {
       textAlign: 'left',
+      marginLeft: '10px',
     },
     iconContainer: {
       display: 'flex',
@@ -93,6 +89,7 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
     },
     cancelButton: {
       height: '50%',
@@ -100,9 +97,15 @@ const useStyles = makeStyles(theme => {
     buttonContainer: {
       display: 'flex',
       flexDirection: 'row',
+      alignItems: 'center',
     },
   };
 });
+
+export interface DetailProps {
+  displayId: string;
+  setDisplayId: (displayId: string) => void;
+}
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
@@ -126,7 +129,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     console.error('An error has occurred with the Get Request');
   }
 
-  const data = response && response.data; // same response?.data
+  const data = response && response.data; // S/N: same as response?.data
 
   if (!data) {
     return <div></div>;
@@ -185,11 +188,11 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
           <div>
             <div className={classes.titleContainer}>
               <div className={classes.buttonContainer}>
-                <Button>
+                <Button variant="outlined" color="primary" size="small">
                   <ArrowBackIcon
                     onClick={() => {
+                      window.history.back();
                       setDisplayId('');
-                      window.location.hash = '';
                     }}
                   />
                 </Button>

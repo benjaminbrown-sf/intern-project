@@ -61,7 +61,7 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   return (
     <TableRow
       onClick={() => {
-        setDisplayId('' + id); // This should only go one direction
+        setDisplayId('' + id);
         window.location.hash = '' + id;
       }}
     >
