@@ -79,9 +79,10 @@ const useStyles = makeStyles(theme => {
       fontWeight: 'lighter',
     },
     checkCircle: {
-      color: '#14FF52',
-      fontSize: 'medium',
+      color: theme.palette.success.main,
+      fontSize: 'large',
       marginRight: '5px',
+      transform: 'scale(1.5)',
     },
     accountIcon: {
       fontSize: 'medium',
@@ -91,7 +92,6 @@ const useStyles = makeStyles(theme => {
     paymentIcon: {
       fontSize: 'medium',
     },
-
     titleContainer: {
       display: 'flex',
       flexDirection: 'row',
@@ -126,8 +126,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   if (!data) {
     return <div></div>;
   }
-
-  console.log(JSON.stringify(response?.data));
 
   const {
     id,

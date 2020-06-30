@@ -30,8 +30,8 @@ const useStyles = makeStyles(theme => {
       maxWidth: '700px',
     },
     checkCircle: {
-      color: '#14FF52',
-      fontSize: 'medium',
+      color: theme.palette.status.success,
+      fontSize: 'large',
       marginRight: '5px',
     },
     recurringContainer: {
@@ -43,14 +43,25 @@ const useStyles = makeStyles(theme => {
       alignItems: 'center',
       marginTop: '5px',
       height: '25px',
+      marginBottom: '5px',
+    },
+    actionIcon: {
+      marginTop: '5px',
     },
     title: {
       textAlign: 'left',
       marginBottom: '5px',
     },
     calendarIcon: {
-      fontSize: 'medium',
-      marginRight: '5px',
+      fontSize: 'large',
+      marginRight: '7.5px',
+      transform: 'scale(1.5)',
+    },
+    textBold: {
+      fontWeight: 'bold',
+    },
+    alignRow: {
+      alignItems: 'center',
     },
   };
 });
@@ -97,7 +108,10 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
             <TableRow>
               {tableHeaders.map(header => {
                 return (
-                  <TableCell key={`TableHeader-${header.value}+`}>
+                  <TableCell
+                    className={classes.textBold}
+                    key={`TableHeader-${header.value}+`}
+                  >
                     {header.label}
                   </TableCell>
                 );
@@ -107,7 +121,10 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
           <TableBody>
             {installments.map(installment => {
               return (
-                <TableRow key={`RecurringPayment-${++i}-row`}>
+                <TableRow
+                  className={classes.alignRow}
+                  key={`RecurringPayment-${++i}-row`}
+                >
                   <TableCell key={`RecurringPayment-${i}-date`}>
                     {moment(installment.date).format('L')}
                   </TableCell>
@@ -126,7 +143,7 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
                     {installment.currency}
                   </TableCell>
                   <TableCell key={`RecurringPayment-${i}-action`}>
-                    <MoreVertIcon />
+                    <MoreVertIcon className={classes.actionIcon} />
                   </TableCell>
                 </TableRow>
               );

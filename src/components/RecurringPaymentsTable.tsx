@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => {
   return {
     columnHeader: {
       fontWeight: 'bold',
-      color: '#21007F',
+      color: theme.palette.primary.main,
     },
     tableCellHeader: {
       cursor: 'pointer',
@@ -72,15 +72,18 @@ const useStyles = makeStyles(theme => {
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+  useEffect(
+    () => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    [value, delay]
+  );
   return debouncedValue;
 };
 
@@ -207,7 +210,7 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
                   }
                   setFilterVariables(newFilters);
                 }}
-              ></Chip>
+              />
             );
           })}
         </div>

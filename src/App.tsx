@@ -27,6 +27,7 @@ const useAppStyles = makeStyles(theme => {
       justifyContent: 'center',
       fontSize: 'calc(10px + 2vmin)',
       color: 'white',
+      marginBottom: '16px',
     },
     appLogo: {
       height: '100px',
