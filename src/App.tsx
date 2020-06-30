@@ -53,6 +53,7 @@ const App = (): JSX.Element => {
   const [displayId, setDisplayId] = React.useState(
     window.location.hash.slice(1) || ''
   );
+  // const [history, setHistory] = React.useState([]);
 
   return (
     <ThemeProvider theme={MUITheme}>

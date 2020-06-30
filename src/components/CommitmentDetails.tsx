@@ -8,10 +8,12 @@ import theme from '../theme';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Button } from '@material-ui/core';
+
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import LoopIcon from '@material-ui/icons/Loop';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
@@ -95,6 +97,10 @@ const useStyles = makeStyles(theme => {
     cancelButton: {
       height: '50%',
     },
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
   };
 });
 
@@ -173,17 +179,22 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       ) : null}
 
       {loading ? (
-        <p>Loading...</p>
+        <LoopIcon />
       ) : (
         <div>
-          <div
-            onClick={() => {
-              setDisplayId('');
-              window.location.hash = '';
-            }}
-          >
+          <div>
             <div className={classes.titleContainer}>
-              <h2 className={classes.pageTitle}>Recurring Payment</h2>
+              <div className={classes.buttonContainer}>
+                <Button>
+                  <ArrowBackIcon
+                    onClick={() => {
+                      setDisplayId('');
+                      window.location.hash = '';
+                    }}
+                  />
+                </Button>
+                <h2 className={classes.pageTitle}>Recurring Payment</h2>
+              </div>
               <Button
                 className={classes.cancelButton}
                 variant="contained"
