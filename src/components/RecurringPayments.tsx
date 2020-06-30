@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => {
     },
     checkCircle: {
       color: theme.palette.success.main,
-      fontSize: 'large',
       marginRight: '5px',
     },
     recurringContainer: {
@@ -47,9 +46,7 @@ const useStyles = makeStyles(theme => {
       marginBottom: '5px',
     },
     calendarIcon: {
-      fontSize: 'large',
       marginRight: '7.5px',
-      transform: 'scale(1.5)',
     },
     textBold: {
       fontWeight: 'bold',
@@ -128,8 +125,7 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
                   </div>
                 </TableCell>
                 <TableCell key={`RecurringPayment-${i}-amount`}>
-                  {installment.amount}
-                  {installment.currency}
+                  ${installment.amount / 1000} {installment.currency}
                 </TableCell>
                 <TableCell key={`RecurringPayment-${i}-action`}>
                   <MoreVertIcon className={classes.actionIcon} />

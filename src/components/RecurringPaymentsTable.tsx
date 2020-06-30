@@ -15,7 +15,11 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 
 import theme from '../theme';
 
-import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
+import {
+  useGet,
+  CommitmentsQueryParams,
+  CommitmentResponse,
+} from '../hooks/axiosHooks';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -50,7 +54,7 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '350px', // Especially not married to this
+      width: '300px', // Especially not married to this
     },
     TextInput: {
       justifyContent: 'right',
@@ -69,21 +73,18 @@ const useStyles = makeStyles(theme => {
   };
 });
 
-const useDebounce = (value, delay) => {
+const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
 
-  useEffect(
-    () => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
 
-      return () => {
-        clearTimeout(handler);
-      };
-    },
-    [value, delay]
-  );
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
   return debouncedValue;
 };
 
@@ -91,27 +92,6 @@ export interface Pagination {
   totalCount: number;
   pageStart?: number;
   pageEnd?: number;
-}
-
-export interface Schedule {
-  id: string;
-  nextPaymentTimestamp: string;
-  recurringAmount: number;
-  frequency: string;
-  status: string;
-}
-
-export interface Commitment {
-  organizationId: number;
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  amountPaidToDate: number;
-  pledgeAmount?: number;
-  currency: string;
-  status: string;
-  schedules: Schedule[];
 }
 
 export interface TableProps {
@@ -262,13 +242,15 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
             ) : null}
           </TableRow>
           {response
-            ? response.data.commitments.map(commitment => (
-                <RecurringPaymentsTableRow
-                  key={commitment.id}
-                  commitment={commitment}
-                  setDisplayId={setDisplayId}
-                />
-              ))
+            ? response.data.commitments.map(
+                (commitment: CommitmentResponse) => (
+                  <RecurringPaymentsTableRow
+                    key={commitment.id}
+                    commitment={commitment}
+                    setDisplayId={setDisplayId}
+                  />
+                )
+              )
             : null}
         </TableBody>
       </Table>

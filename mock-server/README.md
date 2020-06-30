@@ -10,13 +10,13 @@ It contains two endpoints:
 
 To randomly create a set of 100 commitments, run the server, then paste this into a browser tab:
 
-`localhost:9998/generate`
+`GET localhost:9998/generate`
 
 This will return the JSON list for all 100 commitments and save a file called `commitments.json`.  The server reads this file as its source of data.
 
 To query these commitments, use the `commitments` endpoint:
 
-`localhost:9998/commitments`
+`GET localhost:9998/commitments`
 
 Pasting the above into a browser tab will list all the commitments in the commitments.json file.
 
@@ -48,7 +48,19 @@ A single commitment has this data structure:
 *NOTE* amountPaidToDate and recurringAmount are listed in cents
 *NOTE* all the mock server's commitments are MONTH frequency
 
-## Arguments
+To retrieve data for a single commitment:
+
+`GET localhost:9998/commitment/<commitmentId>`
+
+To stop a commitment:
+
+`POST localhost:9998/commitment/<commitmentId>`
+
+To refund a commitment:
+
+`POST localhost:9998/commitment/refund/<commitmentId>`
+
+## Argument Examples
 
 - sortField: the key in the commitment to sort the output.  One of [id, firstName, lastName, email, amountPaidToDate, currency, status].
 - sortDirection: the direction to sort the sortField.  One of ['ASC', 'DSC'].  Default='ASC'.

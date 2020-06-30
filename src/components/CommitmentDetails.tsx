@@ -75,8 +75,7 @@ const useStyles = makeStyles(theme => {
     },
     checkCircle: {
       color: theme.palette.success.main,
-      fontSize: 'large',
-      marginRight: '5px',
+      marginRight: '10px',
       transform: 'scale(1.5)',
     },
     accountIcon: {
@@ -194,9 +193,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               </Button>
             </div>
             <div className={classes.paymentContainer}>
-              <div
-                className={classes.textBold}
-              >{`$${amountPaidToDate} ${currency} Total`}</div>
+              <div className={classes.textBold}>{`$${
+                amountPaidToDate / 1000
+              } ${currency} Total`}</div>
               <div className={classes.textBold}>{`$${
                 recurringAmount / 1000
               } ${currency} Per ${fixCasing(frequency)}`}</div>
