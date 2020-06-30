@@ -97,11 +97,11 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
       <Table className={classes.paymentsTable}>
         <TableHead>
           <TableRow>
-            {tableHeaders.map((header, i) => {
+            {tableHeaders.map(header => {
               return (
                 <TableCell
                   className={classes.textBold}
-                  key={`TableHeader-${header.value}+${i}`}
+                  key={`TableHeader-${header.value}`}
                 >
                   {header.label}
                 </TableCell>
