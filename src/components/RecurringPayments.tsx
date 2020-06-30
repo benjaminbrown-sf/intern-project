@@ -16,13 +16,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 
-import {
-  createMuiTheme,
-  ThemeProvider,
-  makeStyles,
-} from '@material-ui/core/styles';
-
-const MUITheme = createMuiTheme(theme);
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -94,65 +88,61 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
   let i = 0;
 
   return (
-    <ThemeProvider theme={MUITheme}>
-      <div className={classes.recurringContainer}>
-        <h3 className={classes.title}>Recurring Payments</h3>
-        <div className={classes.iconContainer}>
-          <DateRangeIcon className={classes.calendarIcon} />
-          <p>{`Next payment is on ${moment(nextPayment).format('L')} for $${
-            recurringAmount / 1000
-          } ${currency}`}</p>
-        </div>
-        <Table className={classes.paymentsTable}>
-          <TableHead>
-            <TableRow>
-              {tableHeaders.map(header => {
-                return (
-                  <TableCell
-                    className={classes.textBold}
-                    key={`TableHeader-${header.value}+`}
-                  >
-                    {header.label}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {installments.map(installment => {
+    <div className={classes.recurringContainer}>
+      <h3 className={classes.title}>Recurring Payments</h3>
+      <div className={classes.iconContainer}>
+        <DateRangeIcon className={classes.calendarIcon} />
+        <p>{`Next payment is on ${moment(nextPayment).format('L')} for $${
+          recurringAmount / 1000
+        } ${currency}`}</p>
+      </div>
+      <Table className={classes.paymentsTable}>
+        <TableHead>
+          <TableRow>
+            {tableHeaders.map(header => {
               return (
-                <TableRow
-                  className={classes.alignRow}
-                  key={`RecurringPayment-${++i}-row`}
+                <TableCell
+                  className={classes.textBold}
+                  key={`TableHeader-${header.value}+`}
                 >
-                  <TableCell key={`RecurringPayment-${i}-date`}>
-                    {moment(installment.date).format('L')}
-                  </TableCell>
-                  <TableCell key={`RecurringPayment-${i}-status`}>
-                    <div className={classes.iconContainer}>
-                      {installment.status === 'ACTIVE' ? (
-                        <CheckCircleOutlineIcon
-                          className={classes.checkCircle}
-                        />
-                      ) : null}
-                      <div>{fixCasing(installment.status)}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell key={`RecurringPayment-${i}-amount`}>
-                    {installment.amount}
-                    {installment.currency}
-                  </TableCell>
-                  <TableCell key={`RecurringPayment-${i}-action`}>
-                    <MoreVertIcon className={classes.actionIcon} />
-                  </TableCell>
-                </TableRow>
+                  {header.label}
+                </TableCell>
               );
             })}
-          </TableBody>
-        </Table>
-        <h3 className={classes.title}>Custom Fields</h3>
-      </div>
-    </ThemeProvider>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {installments.map(installment => {
+            return (
+              <TableRow
+                className={classes.alignRow}
+                key={`RecurringPayment-${++i}-row`}
+              >
+                <TableCell key={`RecurringPayment-${i}-date`}>
+                  {moment(installment.date).format('L')}
+                </TableCell>
+                <TableCell key={`RecurringPayment-${i}-status`}>
+                  <div className={classes.iconContainer}>
+                    {installment.status === 'ACTIVE' ? (
+                      <CheckCircleOutlineIcon className={classes.checkCircle} />
+                    ) : null}
+                    <div>{fixCasing(installment.status)}</div>
+                  </div>
+                </TableCell>
+                <TableCell key={`RecurringPayment-${i}-amount`}>
+                  {installment.amount}
+                  {installment.currency}
+                </TableCell>
+                <TableCell key={`RecurringPayment-${i}-action`}>
+                  <MoreVertIcon className={classes.actionIcon} />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+      <h3 className={classes.title}>Custom Fields</h3>
+    </div>
   );
 };
 

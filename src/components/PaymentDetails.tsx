@@ -1,15 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 
-import {
-  makeStyles,
-  createMuiTheme,
-  ThemeProvider,
-} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import theme from '../theme';
-
-const MUITheme = createMuiTheme(theme);
 
 export interface PaymentDetailInfo {
   origin: number | string;
@@ -110,22 +104,20 @@ const PaymentDetails = (props: PaymentDetailProps): JSX.Element => {
   let i = 0;
 
   return (
-    <ThemeProvider theme={MUITheme}>
-      <div className={classes.paymentContainer}>
-        <h3>Payment Details</h3>
-        {details.map(item => {
-          return (
-            <div
-              className={classes.detailRow}
-              key={`detailValue-${item.label}-${++i}`}
-            >
-              <div className={classes.detailKey}>{item.label}</div>
-              <div className={classes.detailValue}>{item.value}</div>
-            </div>
-          );
-        })}
-      </div>
-    </ThemeProvider>
+    <div className={classes.paymentContainer}>
+      <h3>Payment Details</h3>
+      {details.map(item => {
+        return (
+          <div
+            className={classes.detailRow}
+            key={`detailValue-${item.label}-${++i}`}
+          >
+            <div className={classes.detailKey}>{item.label}</div>
+            <div className={classes.detailValue}>{item.value}</div>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

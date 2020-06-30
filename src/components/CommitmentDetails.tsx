@@ -6,11 +6,7 @@ import fixCasing from '../utils/fixCasing';
 
 import theme from '../theme';
 
-import {
-  createMuiTheme,
-  ThemeProvider,
-  makeStyles,
-} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Button } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import LoopIcon from '@material-ui/icons/Loop';
@@ -19,8 +15,6 @@ import PaymentIcon from '@material-ui/icons/Payment';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
-
-const MUITheme = createMuiTheme(theme);
 
 export interface DetailProps {
   displayId: string;
@@ -176,7 +170,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ThemeProvider theme={MUITheme}>
+        <div>
           <div
             onClick={() => {
               setDisplayId('');
@@ -240,7 +234,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               currency={currency}
             />
           </div>
-        </ThemeProvider>
+        </div>
       )}
     </div>
   );
