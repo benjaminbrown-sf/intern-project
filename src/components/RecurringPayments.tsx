@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => {
       maxWidth: '700px',
     },
     checkCircle: {
-      color: theme.palette.status.success,
+      color: theme.palette.success.main,
       fontSize: 'large',
       marginRight: '5px',
     },

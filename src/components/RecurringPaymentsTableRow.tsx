@@ -5,10 +5,16 @@ import fixCasing from '../utils/fixCasing';
 
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+  createMuiTheme,
+  ThemeProvider,
+  makeStyles,
+} from '@material-ui/core/styles';
 import theme from '../theme';
 
 import { Commitment } from './RecurringPaymentsTable';
+
+const MUITheme = createMuiTheme(theme);
 
 const useStyles = makeStyles(theme => {
   return {
@@ -17,7 +23,7 @@ const useStyles = makeStyles(theme => {
       flexDirection: 'column',
     },
     checkCircle: {
-      color: theme.palette.status.success,
+      color: theme.palette.success.main,
       fontSize: 'medium',
       marginRight: '5px',
     },
@@ -59,34 +65,36 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const status = schedules.status;
 
   return (
-    <TableRow
-      onClick={() => {
-        setDisplayId('' + id); // This should only go one direction
-        window.location.hash = '' + id;
-      }}
-    >
-      <TableCell className={classes.flexCell} align="left">
-        <div>{name}</div>
-        <div>{props.commitment.email}</div>
-      </TableCell>
-      <TableCell align="left">
-        <div>{totalGiving}</div>
-        <div className={classes.hiddenText}>Ghost Text</div>
-      </TableCell>
-      <TableCell className={classes.flexCell} align="left">
-        <div>{date}</div>
-        <div>{nextPayment}</div>
-      </TableCell>
-      <TableCell align="left">
-        <div className={classes.alignCell}>
-          {status === 'ACTIVE' ? (
-            <CheckCircleOutlineIcon className={classes.checkCircle} />
-          ) : null}
-          {fixCasing(status)}
-        </div>
-        <div className={classes.hiddenText}>Ghost Text</div>
-      </TableCell>
-    </TableRow>
+    <ThemeProvider theme={MUITheme}>
+      <TableRow
+        onClick={() => {
+          setDisplayId('' + id); // This should only go one direction
+          window.location.hash = '' + id;
+        }}
+      >
+        <TableCell className={classes.flexCell} align="left">
+          <div>{name}</div>
+          <div>{props.commitment.email}</div>
+        </TableCell>
+        <TableCell align="left">
+          <div>{totalGiving}</div>
+          <div className={classes.hiddenText}>Ghost Text</div>
+        </TableCell>
+        <TableCell className={classes.flexCell} align="left">
+          <div>{date}</div>
+          <div>{nextPayment}</div>
+        </TableCell>
+        <TableCell align="left">
+          <div className={classes.alignCell}>
+            {status === 'ACTIVE' ? (
+              <CheckCircleOutlineIcon className={classes.checkCircle} />
+            ) : null}
+            {fixCasing(status)}
+          </div>
+          <div className={classes.hiddenText}>Ghost Text</div>
+        </TableCell>
+      </TableRow>
+    </ThemeProvider>
   );
 };
 

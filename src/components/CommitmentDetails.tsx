@@ -165,6 +165,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     recurringId: schedules[0].id,
   };
 
+  console.log('CommitmentDetails Theme:', theme);
+  console.log('MUITheme:', MUITheme);
+
   return (
     <div>
       {error ? (

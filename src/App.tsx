@@ -53,6 +53,8 @@ const App = (): JSX.Element => {
   const [displayId, setDisplayId] = React.useState(
     window.location.hash.slice(1) || ''
   );
+
+  console.log('App Theme:', theme);
   return (
     <ThemeProvider theme={MUITheme}>
       <div className={classes.app}>
