@@ -145,16 +145,16 @@ export const useGet = function <QueryParamsType>(
           if (LOG_REQUESTS) {
             console.log('get', cacheKey, response.data);
           }
+          setError(false);
           setData(response);
           setLoading(false);
-          setError(false);
           outgoingRequests[cacheKey] = false;
           cache[cacheKey] = response;
         } catch (e) {
           console.error('Failed to get', e);
+          setError(true);
           setData(null);
           setLoading(false);
-          setError(true);
         }
       }
     };
@@ -194,16 +194,16 @@ export const usePost = function <QueryParamsType, BodyParamsType>(
           if (LOG_REQUESTS) {
             console.log('post', cacheKey, response.data);
           }
+          setError(false);
           setData(response);
           setLoading(false);
-          setError(false);
           outgoingRequests[cacheKey] = false;
           cache[cacheKey] = response;
         } catch (e) {
           console.error('Failed to post', e);
+          setError(true);
           setData(null);
           setLoading(false);
-          setError(true);
         }
       }
     };
