@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   createMuiTheme,
   ThemeProvider,
@@ -47,12 +47,48 @@ const useAppStyles = makeStyles(theme => {
 const App = (): JSX.Element => {
   const classes = useAppStyles(theme);
 
-  // This Hook is used to keep track of whether to render the table or CommitmentDetails
-  // const [displayDetails, setDisplayDetails] = React.useState(false);
   // This Hook is used to keep track of which CommitmentDetails should be displayed
   const [displayId, setDisplayId] = React.useState(
     window.location.hash.slice(1) || ''
   );
+
+  // This is intended to be used for more generalized purposes
+  const [history, setHistory] = React.useState([] as string[]); // May not need to be a hook
+
+  const isInDoc = useRef(true);
+
+  // Intended for future functionality
+  const goBack = () => {
+    window.location.hash = history[history.length - 1];
+    setHistory(history.slice(0, -1)); // Should effectively be an inverted pop
+  };
+
+  useEffect(() => {
+    // The purpose of these event listeners is to determine the difference between the on-page and browser back buttons
+    window.addEventListener('mouseenter', () => {
+      isInDoc.current = true;
+    });
+    window.addEventListener('mouseleave', () => {
+      isInDoc.current = false;
+    });
+    window.addEventListener('hashchange', () => {
+      // If the in-doc back-button is used
+
+      if (isInDoc.current) {
+        if (window.location.hash === '') {
+          setDisplayId('');
+        }
+      } else {
+        // If there is no browser history
+        if (window.location.hash !== '#undefined') {
+          setDisplayId('');
+          window.location.hash = '';
+        } else {
+          goBack();
+        }
+      }
+    });
+  });
 
   return (
     <ThemeProvider theme={MUITheme}>
