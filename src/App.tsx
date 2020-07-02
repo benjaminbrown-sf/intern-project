@@ -57,15 +57,6 @@ const App = (): JSX.Element => {
 
   const isInDoc = useRef(true);
 
-  // const getHash = () => {
-  //   return history[history.length - 1];
-  // };
-
-  // const updateHistory = newUrl => {
-  //   setHistory([...history, window.location.hash]);
-  //   window.location.hash = newUrl;
-  // };
-
   // Intended for future functionality
   const goBack = () => {
     window.location.hash = history[history.length - 1];
@@ -98,27 +89,6 @@ const App = (): JSX.Element => {
         }
       }
     });
-    // window.addEventListener('hashchange', () => {
-    //   // If we are not using the in-app button (handled elsewhere)
-    //   if (!isInDoc.current) {
-    //     // If there are history items
-    //     if (window.location.hash !== '#undefined') {
-    //       // If we are not on the table
-    //       if (displayId !== '') {
-    //         // setDisplayId('');
-    //         goBack();
-    //       } else {
-    //         // const newId = getHash();
-    //         // setDisplayId(newId);
-    //         goBack();
-
-    //       }
-    //     } else {
-    //       // If no history items, reload
-    //       window.location.reload();
-    //     }
-    //   }
-    // });
   });
 
   return (
