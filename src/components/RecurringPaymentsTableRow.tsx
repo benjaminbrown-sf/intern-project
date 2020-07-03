@@ -1,14 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-
 import fixCasing from '../utils/fixCasing';
-
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../theme';
-
-import { Commitment } from './RecurringPaymentsTable';
+import { CommitmentResponse } from '../hooks/axiosHooks';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -33,7 +30,7 @@ const useStyles = makeStyles(theme => {
 
 // This means that props is expecting a single argument, commitment, of imported type Commitment
 export interface RowProps {
-  commitment: Commitment;
+  commitment: CommitmentResponse;
   setDisplayId: (displayId: string) => void;
 }
 
@@ -50,7 +47,9 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
 
   const name = props.commitment.firstName + ' ' + props.commitment.lastName;
 
-  const totalGiving = `$${props.commitment.amountPaidToDate} ${props.commitment.currency}`;
+  const totalGiving = `$${props.commitment.amountPaidToDate / 1000} ${
+    props.commitment.currency
+  }`;
 
   const nextPayment = `$${schedules.recurringAmount / 1000} ${
     props.commitment.currency

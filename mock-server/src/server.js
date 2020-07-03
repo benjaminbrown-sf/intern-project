@@ -2,83 +2,47 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
-const faker = require('faker');
+const generate = require('./generate');
+const EXAMPLE = require('./example');
+const {
+  STATUS_ACTIVE,
+  STATUS_CANCELED,
+  STATUS_STOPPED,
+  STATUS_REFUNDED,
+  DIRECTION_ASC,
+  DIRECTION_DSC,
+  STATUS_CODE_BAD_REQUEST,
+  STATUS_CODE_NOT_FOUND,
+  STATUS_CODE_INTERNAL_SERVER_ERROR,
+} = require('./constants');
 
 const PORT = 9998;
-const DATA_FILE = './commitments.json';
-
-const DIRECTION_ASC = 'ASC';
-const DIRECTION_DSC = 'DSC';
-
-const STATUS_ACTIVE = 'ACTIVE';
-const STATUS_CANCELED = 'CANCELED';
-const STATUS_STOPPED = 'STOPPED';
-
-// taken from SPC graphql data model for rendering a recurring commitments table
-const EXAMPLE = {
-  pagination: {
-    totalCount: 1,
-  },
-  commitments: [
-    {
-      organizationId: 12363,
-      id: '21d79074-f01c-40cd-a74e-93fa758e5568', // Origin ID
-      creationTimestamp: '',
-      startedTimestamp: '',
-      firstName: 'Benjamin',
-      lastName: 'Brown',
-      email: 'benjamin.t.brown@hotmail.com',
-      amountPaidToDate: 1000,
-      pledgeAmount: null,
-      currency: 'USD',
-      status: 'ACTIVE',
-      paymentMethod: {
-        origin: 'Giving Page',
-        originName: "Benjamin's QA3 Giving Page",
-        paymentGateway: 'SFDO Test',
-        paymentGatewayNickname: 'ben',
-        card: 'VISA',
-        lastFour: 1111,
-        expiration: '01/2021',
-      },
-      schedules: [
-        {
-          id: '5dc7236e-9b2a-4d5b-92c1-c59b86120b06', // Recurring ID
-          nextPaymentTimestamp: '2020-07-04T09:35:00Z',
-          recurringAmount: 1000,
-          frequency: 'MONTH',
-          status: 'ACTIVE', // Succeeded?
-        },
-      ],
-      installments: [
-        {
-          date: '2020-07-04T09:35:00Z',
-          status: 'SUCCEEDED',
-          amount: 10,
-          currency: 'USD',
-        },
-      ],
-      customFields: {
-        blarg: 'honk',
-      },
-    },
-  ],
-};
-
-const randomId = () => {
-  const set = 'abcdefghijklmnopqrstuvwxyz1234567890';
-  let ret = '';
-  for (let i = 0; i < 10; i++) {
-    ret += set[Math.floor(Math.random() * set.length)];
-  }
-  return ret;
-};
+const COMMITMENTS_DATA_FILE = './commitments.json';
+const TRANSACTIONS_DATA_FILE = './transactions.json';
 
 const log = function () {
   console.log.apply(console, [
     `[${new Date().toISOString()}][MOCK SERVER]`,
     ...arguments,
   ]);
+};
+
+const cache = {};
+
+const loadDataJson = function (filePath) {
+  if (cache[filePath]) {
+    return JSON.parse(JSON.stringify(cache[filePath]));
+  }
+
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(filePath));
+    cache[filePath] = data;
+  } catch (e) {
+    log('Failed to load data file', e.stack);
+    return null;
+  }
+  return data;
 };
 
 const validateCommitmentsParams = params => {
@@ -102,7 +66,7 @@ const validateCommitmentsParams = params => {
   }
 
   if (params.sortField) {
-    const example = EXAMPLE.commitments[0];
+    const example = EXAMPLE.EXAMPLE_COMMITMENT;
     const values = Object.keys(example).filter(key => {
       return key !== 'pledgeAmount' || key !== 'schedules';
     });
@@ -170,110 +134,34 @@ const sortCommitments = (commitments, field, direction) => {
   });
 };
 
-const generateInstallment = () => {
-  const status =
-    Math.random() > 0.15
-      ? STATUS_ACTIVE
-      : Math.random() > 0.5
-      ? STATUS_CANCELED
-      : STATUS_STOPPED;
-  const amount = faker.finance.amount();
-  const currency = 'USD';
-  const installmentDate = faker.date.past();
-  return {
-    date: installmentDate,
-    status,
-    amount,
-    currency,
-  };
-};
-
-const generatePaymentMethod = () => {
-  const origin = faker.finance.account();
-  const originName = faker.finance.accountName();
-  const paymentGateway = 'SFDO Test';
-  const paymentGatewayNickname = 'SFDO';
-  const card = 'VISA';
-  const lastFour = Math.floor(Math.random() * 10000); // Doesn't seem to work right
-  const expiration = '01/21';
-  return {
-    origin,
-    originName,
-    paymentGateway,
-    paymentGatewayNickname,
-    card,
-    lastFour,
-    expiration,
-  };
-};
-
-const generateCommitment = () => {
-  const nextPayment = new Date();
-  const status =
-    Math.random() > 0.15
-      ? STATUS_ACTIVE
-      : Math.random() > 0.5
-      ? STATUS_CANCELED
-      : STATUS_STOPPED;
-  const amount = Math.floor(Math.random() * 250) * 1000;
-  const numMonthsPaid = 1 + Math.floor(Math.random() * 12);
-  nextPayment.setMonth(nextPayment.getMonth() + 1);
-  const creationTimestamp = faker.date.past();
-  const startedTimestamp = faker.date.recent();
-  const installment = generateInstallment();
-  const paymentMethod = generatePaymentMethod();
-
-  const commitment = {
-    ...EXAMPLE.commitments[0],
-    id: randomId(),
-    creationTimestamp: creationTimestamp,
-    startedTimestamp: startedTimestamp,
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    amountPaidToDate: (amount * numMonthsPaid) / 1000,
-    status: status,
-    paymentMethod: paymentMethod,
-    schedules: [
-      {
-        ...EXAMPLE.commitments[0].schedules[0],
-        id: randomId(),
-        recurringAmount: amount,
-        nextPaymentTimestamp: +nextPayment,
-        status,
-      },
-    ],
-    installments: [installment],
-    customFields: {},
-  };
-  return commitment;
-};
-
-const generate = amount => {
-  const commitments = [];
-  for (let i = 0; i < amount; i++) {
-    commitments.push(generateCommitment());
-  }
-  return commitments;
-};
-
 const getCommitment = id => {
-  let commitments;
-  try {
-    commitments = JSON.parse(fs.readFileSync(DATA_FILE));
-  } catch (e) {
-    log('Failed to load commitment file', e.stack);
-    return;
+  const commitments = loadDataJson(COMMITMENTS_DATA_FILE);
+  if (!commitments) {
+    return null;
   }
 
   const l = commitments.length;
-  console.log(commitments[0]);
   for (let i = 0; i < l; i++) {
-    if (commitments[i]['id'] === id) {
+    if (commitments[i].id === id) {
       return commitments[i];
     }
   }
-  return false;
+  return null;
+};
+
+const getTransaction = id => {
+  const transactions = loadDataJson(TRANSACTIONS_DATA_FILE);
+  if (!transactions) {
+    return null;
+  }
+
+  const l = transactions.length;
+  for (let i = 0; i < l; i++) {
+    if (transactions[i].id === id) {
+      return transactions[i];
+    }
+  }
+  return null;
 };
 
 const app = express();
@@ -282,7 +170,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get('/commitments', async (req, res) => {
-  log(`GET/commitments`, req.body);
+  log(`GET/commitments`, JSON.stringify(req.query));
   const resp = {
     pagination: {
       totalCount: 0,
@@ -292,17 +180,15 @@ app.get('/commitments', async (req, res) => {
     commitments: [],
     errors: [],
   };
-  let commitments;
-  try {
-    commitments = JSON.parse(fs.readFileSync(DATA_FILE));
-  } catch (e) {
-    log('Failed to load commitment file', e.stack);
-    res.send(JSON.stringify(resp));
+  let commitments = loadDataJson(COMMITMENTS_DATA_FILE);
+  if (!commitments) {
+    res
+      .status(STATUS_CODE_INTERNAL_SERVER_ERROR)
+      .send('Failed to load commitments file');
     return;
   }
 
   const { errors, valid, params } = validateCommitmentsParams(req.query);
-  log('Params', params);
 
   if (!valid) {
     resp.errors = errors;
@@ -348,33 +234,101 @@ app.get('/commitments', async (req, res) => {
   }
 
   resp.commitments = commitments;
-  res.send(JSON.stringify(resp));
+  res.send(resp);
 });
 
 app.get('/generate', async (req, res) => {
-  log(`GET/generate`, req.body);
-  const commitments = generate(100);
+  log('GET/generate', req.body);
+  const commitments = generate.generateData(100);
   const resp = {
     commitments,
   };
-  fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
+  fs.writeFileSync(COMMITMENTS_DATA_FILE, JSON.stringify(commitments));
   res.send(JSON.stringify(resp));
 });
 
 app.get('/commitment/:commitmentId', async (req, res) => {
-  log(`GET/commitment`, req.params.commitmentId);
-  const commitment = getCommitment(req.params.commitmentId);
+  log('GET/commitment', req.params.commitmentId);
+  let { commitmentId } = req.params;
+  const commitment = getCommitment(commitmentId);
   commitment
     ? res.send(commitment)
-    : res.status(404).send(`No match found for: ${req.params.commitmentId}`);
+    : res
+        .status(STATUS_CODE_NOT_FOUND)
+        .send(`No match found for commitment id: ${commitmentId}`);
 });
 
-try {
-  fs.readFileSync(DATA_FILE);
-} catch (e) {
-  log('Failed to load commitments.json, generating one now...');
-  const commitments = generate(100);
-  fs.writeFileSync(DATA_FILE, JSON.stringify(commitments));
+// Stop a commitment by commitment id
+app.post('/commitment/:commitmentId', async (req, res) => {
+  log('POST/commitment', req.prams.commitmentId);
+  let { commitmentId } = req.params;
+  const commitment = getCommitment(commitmentId);
+
+  if (commitment) {
+    if (commitment.status === STATUS_STOPPED) {
+      res
+        .status(STATUS_CODE_BAD_REQUEST)
+        .send('Specified commitment has already been stopped.');
+      return;
+    }
+    commitment.status = STATUS_STOPPED;
+    res.send(commitment);
+  } else {
+    res
+      .status(STATUS_CODE_NOT_FOUND)
+      .send(`No match found for commitment id: ${commitmentId}`);
+  }
+});
+
+// Refund a transaction by transaction id
+app.post('/transaction/refund/:transactionId', async (req, res) => {
+  log('POST/transaction', req.prams.transactionId);
+  let { transactionId } = req.params;
+  const transaction = getTransaction(transactionId);
+
+  if (transaction) {
+    if (transaction.status === STATUS_REFUNDED) {
+      res
+        .status(STATUS_CODE_BAD_REQUEST)
+        .send('Specified transaction has already been refunded.');
+      return;
+    }
+    transaction.status = STATUS_REFUNDED;
+    res.send(transaction);
+  } else {
+    res
+      .status(STATUS_CODE_NOT_FOUND)
+      .send(`No match found for transaction id: ${transactionId}`);
+  }
+});
+
+app.get('/transaction/:transactionId', async (req, res) => {
+  log('GET/transaction', req.params.transactionId);
+  let { transactionId } = req.params;
+  const transaction = getTransaction(transactionId);
+  transaction
+    ? res.send(transaction)
+    : res
+        .status(STATUS_CODE_NOT_FOUND)
+        .send(`No match found for transaction id: ${transactionId}`);
+});
+
+const isDataFileValid = () => {
+  try {
+    fs.readFileSync(COMMITMENTS_DATA_FILE);
+    fs.readFileSync(TRANSACTIONS_DATA_FILE);
+  } catch (e) {
+    console.error(e.message);
+    return false;
+  }
+  return true;
+};
+
+if (!isDataFileValid()) {
+  log(`Invalid data, generating a new set...`);
+  const [commitments, transactions] = generate.generateData(100);
+  fs.writeFileSync(COMMITMENTS_DATA_FILE, JSON.stringify(commitments));
+  fs.writeFileSync(TRANSACTIONS_DATA_FILE, JSON.stringify(transactions));
 }
 
 app.listen(PORT, () => {
