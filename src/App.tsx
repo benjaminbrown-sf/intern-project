@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   createMuiTheme,
   ThemeProvider,
@@ -44,15 +44,41 @@ const useAppStyles = makeStyles(theme => {
   };
 });
 
+let ignoreHashChange = false;
+
 const App = (): JSX.Element => {
   const classes = useAppStyles(theme);
 
-  // This Hook is used to keep track of whether to render the table or CommitmentDetails
-  // const [displayDetails, setDisplayDetails] = React.useState(false);
   // This Hook is used to keep track of which CommitmentDetails should be displayed
   const [displayId, setDisplayId] = React.useState(
     window.location.hash.slice(1) || ''
   );
+
+  useEffect(() => {
+    const handleHashChange = (ev: HashChangeEvent) => {
+      if (ignoreHashChange) {
+        ignoreHashChange = false;
+        return;
+      }
+      const newHash = ev.newURL.slice(ev.newURL.indexOf('#'));
+      if (newHash === '/') {
+        setDisplayId('');
+      } else {
+        setDisplayId(newHash.slice(1));
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  });
+
+  const changeHash = (newHash: string) => {
+    ignoreHashChange = true;
+    setDisplayId(newHash);
+    window.location.hash = newHash;
+  };
 
   return (
     <ThemeProvider theme={MUITheme}>
@@ -62,12 +88,9 @@ const App = (): JSX.Element => {
         </header>
         <div>
           {displayId !== '' ? (
-            <CommitmentDetails
-              displayId={displayId}
-              setDisplayId={setDisplayId}
-            />
+            <CommitmentDetails displayId={displayId} changeHash={changeHash} />
           ) : (
-            <RecurringPaymentsTable setDisplayId={setDisplayId} />
+            <RecurringPaymentsTable changeHash={changeHash} />
           )}
         </div>
       </div>

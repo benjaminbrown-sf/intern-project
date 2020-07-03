@@ -8,18 +8,15 @@ import theme from '../theme';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Button } from '@material-ui/core';
+
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import LoopIcon from '@material-ui/icons/Loop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
-
-export interface DetailProps {
-  displayId: string;
-  setDisplayId: (displayId: string) => void;
-}
 
 const useStyles = makeStyles(theme => {
   return {
@@ -90,16 +87,29 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
+      height: '36px',
     },
     cancelButton: {
-      height: '50%',
+      marginTop: '1px',
+    },
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: '-3px',
     },
   };
 });
 
+export interface DetailProps {
+  displayId: string;
+  changeHash: (newHash: string) => void;
+}
+
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
-  const { displayId, setDisplayId } = props;
+  const { displayId, changeHash } = props;
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
@@ -112,14 +122,14 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   );
 
   if (loading) {
-    return <LoopIcon />;
+    return <CircularProgress />;
   }
 
   if (error) {
     console.error('An error has occurred with the Get Request');
   }
 
-  const data = response && response.data; // same response?.data
+  const data = response && response.data; // S/N: same as response?.data
 
   if (!data) {
     return <div></div>;
@@ -172,17 +182,20 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       ) : null}
 
       {loading ? (
-        <p>Loading...</p>
+        <CircularProgress />
       ) : (
         <div>
-          <div
-            onClick={() => {
-              setDisplayId('');
-              window.location.hash = '';
-            }}
-          >
+          <div>
             <div className={classes.titleContainer}>
-              <h2 className={classes.pageTitle}>Recurring Payment</h2>
+              <div className={classes.buttonContainer}>
+                <Button variant="outlined" color="primary" size="small">
+                  <ArrowBackIcon
+                    onClick={() => {
+                      changeHash('');
+                    }}
+                  />
+                </Button>
+              </div>
               <Button
                 className={classes.cancelButton}
                 variant="contained"
@@ -191,6 +204,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               >
                 {fixCasing('Cancel Recurring Donation')}
               </Button>
+            </div>
+            <div>
+              <h2 className={classes.pageTitle}>Recurring Payment</h2>
             </div>
             <div className={classes.paymentContainer}>
               <div className={classes.textBold}>{`$${

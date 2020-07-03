@@ -95,11 +95,11 @@ export interface Pagination {
 }
 
 export interface TableProps {
-  setDisplayId: (displayId: string) => void;
+  changeHash: (newHash: string) => void;
 }
 
 const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
-  const { setDisplayId } = props;
+  const { changeHash } = props;
 
   const classes = useStyles(theme);
 
@@ -242,15 +242,13 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
             ) : null}
           </TableRow>
           {response
-            ? response.data.commitments.map(
-                (commitment: CommitmentResponse) => (
-                  <RecurringPaymentsTableRow
-                    key={commitment.id}
-                    commitment={commitment}
-                    setDisplayId={setDisplayId}
-                  />
-                )
-              )
+            ? response.data.commitments.map(commitment => (
+                <RecurringPaymentsTableRow
+                  changeHash={changeHash}
+                  key={commitment.id}
+                  commitment={commitment}
+                />
+              ))
             : null}
         </TableBody>
       </Table>
