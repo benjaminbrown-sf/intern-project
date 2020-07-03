@@ -97,7 +97,7 @@ export interface TransactionResponse {
   };
 }
 
-const cache = {};
+let cache = {};
 
 const outgoingRequests = {};
 
@@ -113,14 +113,18 @@ export const getCacheKey = (
   return type + '/' + url + '/' + paramsStr;
 };
 
-export const clearCache = (key: string): boolean => {
-  if (cache[key]) {
-    delete cache[key];
+export const clearCache = (key?: string): boolean => {
+  if (key) {
+    if (cache[key]) {
+      delete cache[key];
+      return true;
+    }
+    return false;
+  } else {
+    cache = {};
     return true;
   }
-  return false;
 };
-
 export const useGet = function <QueryParamsType>(
   apiUrl: string,
   params?: QueryParamsType
@@ -139,22 +143,23 @@ export const useGet = function <QueryParamsType>(
       } else if (!outgoingRequests[cacheKey]) {
         try {
           outgoingRequests[cacheKey] = true;
+          setLoading(true);
           const response = await api.get(apiUrl, {
             params,
           });
           if (LOG_REQUESTS) {
             console.log('get', cacheKey, response.data);
           }
-          setError(false);
           setData(response);
           setLoading(false);
+          setError(false);
           outgoingRequests[cacheKey] = false;
           cache[cacheKey] = response;
         } catch (e) {
           console.error('Failed to get', e);
           setError(true);
-          setData(null);
           setLoading(false);
+          setData(null);
         }
       }
     };
@@ -187,6 +192,7 @@ export const usePost = function <QueryParamsType, BodyParamsType>(
       } else if (!outgoingRequests[cacheKey]) {
         try {
           outgoingRequests[cacheKey] = true;
+          setLoading(true);
           const response = await api.post(apiUrl, {
             params,
             body,
@@ -194,16 +200,16 @@ export const usePost = function <QueryParamsType, BodyParamsType>(
           if (LOG_REQUESTS) {
             console.log('post', cacheKey, response.data);
           }
-          setError(false);
           setData(response);
           setLoading(false);
+          setError(false);
           outgoingRequests[cacheKey] = false;
           cache[cacheKey] = response;
         } catch (e) {
           console.error('Failed to post', e);
           setError(true);
-          setData(null);
           setLoading(false);
+          setData(null);
         }
       }
     };
