@@ -62,7 +62,6 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
     <TableRow
       onClick={() => {
         changeHash('' + id);
-        // setDisplayId('' + id);
       }}
     >
       <TableCell className={classes.flexCell} align="left">

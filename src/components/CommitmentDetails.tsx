@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => {
     },
     pageTitle: {
       textAlign: 'left',
-      marginLeft: '10px',
     },
     iconContainer: {
       display: 'flex',
@@ -90,14 +89,16 @@ const useStyles = makeStyles(theme => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      height: '36px',
     },
     cancelButton: {
-      height: '50%',
+      marginTop: '1px',
     },
     buttonContainer: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+      marginTop: '-3px',
     },
   };
 });
@@ -192,11 +193,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                   <ArrowBackIcon
                     onClick={() => {
                       changeHash('');
-                      // setDisplayId('');
                     }}
                   />
                 </Button>
-                <h2 className={classes.pageTitle}>Recurring Payment</h2>
               </div>
               <Button
                 className={classes.cancelButton}
@@ -206,6 +205,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               >
                 {fixCasing('Cancel Recurring Donation')}
               </Button>
+            </div>
+            <div>
+              <h2 className={classes.pageTitle}>Recurring Payment</h2>
             </div>
             <div className={classes.paymentContainer}>
               <div
