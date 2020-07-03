@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
   createMuiTheme,
   ThemeProvider,
@@ -44,6 +44,8 @@ const useAppStyles = makeStyles(theme => {
   };
 });
 
+let ignoreHashChange = false;
+
 const App = (): JSX.Element => {
   const classes = useAppStyles(theme);
 
@@ -52,44 +54,31 @@ const App = (): JSX.Element => {
     window.location.hash.slice(1) || ''
   );
 
-  // This is intended to be used for more generalized purposes
-  const [history, setHistory] = React.useState([] as string[]); // May not need to be a hook
-
-  const isInDoc = useRef(true);
-
-  // Intended for future functionality
-  const goBack = () => {
-    window.location.hash = history[history.length - 1];
-    setHistory(history.slice(0, -1)); // Should effectively be an inverted pop
-  };
-
   useEffect(() => {
-    // The purpose of these event listeners is to determine the difference between the on-page and browser back buttons
-    window.addEventListener('mouseenter', () => {
-      isInDoc.current = true;
-    });
-    window.addEventListener('mouseleave', () => {
-      isInDoc.current = false;
-    });
-    window.addEventListener('hashchange', () => {
-      // If the in-doc back-button is used
-      if (isInDoc.current) {
-        // If the App is displaying table
-        if (window.location.hash === '') {
-          // Nothing needs to happen
-          setDisplayId('');
-        }
-      } else {
-        // If there is no browser history
-        if (window.location.hash !== '#undefined') {
-          setDisplayId('');
-          window.location.hash = '';
-        } else {
-          goBack();
-        }
+    const handleHashChange = (ev: HashChangeEvent) => {
+      if (ignoreHashChange) {
+        ignoreHashChange = false;
+        return;
       }
-    });
+      const newHash = ev.newURL.slice(ev.newURL.indexOf('#'));
+      if (newHash === '/') {
+        setDisplayId('');
+      } else {
+        setDisplayId(newHash.slice(1));
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   });
+
+  const changeHash = (newHash: string) => {
+    ignoreHashChange = true;
+    setDisplayId(newHash);
+    window.location.hash = newHash;
+  };
 
   return (
     <ThemeProvider theme={MUITheme}>
@@ -99,12 +88,9 @@ const App = (): JSX.Element => {
         </header>
         <div>
           {displayId !== '' ? (
-            <CommitmentDetails
-              displayId={displayId}
-              setDisplayId={setDisplayId}
-            />
+            <CommitmentDetails displayId={displayId} changeHash={changeHash} />
           ) : (
-            <RecurringPaymentsTable setDisplayId={setDisplayId} />
+            <RecurringPaymentsTable changeHash={changeHash} />
           )}
         </div>
       </div>

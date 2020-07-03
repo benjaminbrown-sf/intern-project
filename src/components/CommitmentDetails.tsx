@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Button } from '@material-ui/core';
 
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import LoopIcon from '@material-ui/icons/Loop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -104,12 +104,12 @@ const useStyles = makeStyles(theme => {
 
 export interface DetailProps {
   displayId: string;
-  setDisplayId: (displayId: string) => void;
+  changeHash: (newHash: string) => void;
 }
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
-  const { displayId, setDisplayId } = props;
+  const { displayId, changeHash } = props;
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
@@ -122,7 +122,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   );
 
   if (loading) {
-    return <LoopIcon />;
+    return <CircularProgress />;
   }
 
   if (error) {
@@ -182,7 +182,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       ) : null}
 
       {loading ? (
-        <LoopIcon />
+        <CircularProgress />
       ) : (
         <div>
           <div>
@@ -191,8 +191,8 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                 <Button variant="outlined" color="primary" size="small">
                   <ArrowBackIcon
                     onClick={() => {
-                      window.history.back();
-                      setDisplayId('');
+                      changeHash('');
+                      // setDisplayId('');
                     }}
                   />
                 </Button>

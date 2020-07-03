@@ -85,3 +85,4 @@ yarn-error.log*
 
 mock-server/node_modules
 mock-server/commitments.json
+mock-server/transactions.json
