@@ -15,11 +15,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 
 import theme from '../theme';
 
-import {
-  useGet,
-  CommitmentsQueryParams,
-  CommitmentResponse,
-} from '../hooks/axiosHooks';
+import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
 
 import { makeStyles } from '@material-ui/core/styles';
 

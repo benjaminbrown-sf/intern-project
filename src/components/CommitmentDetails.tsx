@@ -17,6 +17,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
+import Confirmation from '../elements/Confirmation';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -111,6 +112,8 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
   const { displayId, changeHash } = props;
 
+  const [open, setOpen] = React.useState(false);
+
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
     page: 0,
@@ -201,6 +204,9 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                 variant="contained"
                 color="primary"
                 size="medium"
+                onClick={() => {
+                  setOpen(true);
+                }}
               >
                 {fixCasing('Cancel Recurring Donation')}
               </Button>
@@ -254,6 +260,17 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               currency={currency}
             />
           </div>
+          <Confirmation
+            text={`This will cancel all future installments for this recurring donation for ${firstName} ${lastName} immediately.`}
+            cancelLabel={'Cancel'}
+            confirmLabel={'Cancel Recurring Donation'}
+            onConfirmClick={() => console.log('Confirm click!')}
+            open={open}
+            confirmationTitle={'Cancel Recurring Donation'}
+            onCancelClick={() => {
+              setOpen(false);
+            }}
+          />
         </div>
       )}
     </div>
