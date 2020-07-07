@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import fixCasing from '../utils/fixCasing';
+import { fixCasing } from 'utils';
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { makeStyles } from '@material-ui/core/styles';
-import theme from '../theme';
-import { CommitmentResponse } from '../hooks/axiosHooks';
+import theme from 'theme';
+import { CommitmentResponse } from 'hooks/axiosHooks';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => {
 
 // This means that props is expecting a single argument, commitment, of imported type Commitment
 export interface RowProps {
-  commitment: Commitment;
+  commitment: CommitmentResponse;
   changeHash: (newHash: string) => void;
 }
 

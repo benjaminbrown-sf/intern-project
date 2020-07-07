@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import theme from '../theme';
+import theme from 'theme';
 
 export interface PaymentDetailInfo {
   origin: number | string;
@@ -20,7 +20,7 @@ export interface PaymentDetailProps {
   info: PaymentDetailInfo;
 }
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles(() => {
   return {
     cellContainer: {
       display: 'flex',
