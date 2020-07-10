@@ -6,6 +6,7 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../theme';
 import { CommitmentResponse } from '../hooks/axiosHooks';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -25,6 +26,11 @@ const useStyles = makeStyles(theme => {
     hiddenText: {
       visibility: 'hidden',
     },
+    crossCircle: {
+      color: theme.palette.error.main,
+      fontSize: 'medium',
+      marginRight: '5px',
+    },
   };
 });
 
@@ -39,7 +45,7 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
 
   const { changeHash } = props;
   const schedules = props.commitment.schedules[0];
-  const { id } = props.commitment;
+  const { id, status } = props.commitment;
 
   // Handles Date Formatting
   const timestamp = schedules.nextPaymentTimestamp;
@@ -54,8 +60,6 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const nextPayment = `$${schedules.recurringAmount / 1000} ${
     props.commitment.currency
   } / ${schedules.frequency}`;
-
-  const status = schedules.status;
 
   return (
     <TableRow
@@ -79,7 +83,9 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
         <div className={classes.alignCell}>
           {status === 'ACTIVE' ? (
             <CheckCircleOutlineIcon className={classes.checkCircle} />
-          ) : null}
+          ) : (
+            <HighlightOffIcon className={classes.crossCircle} />
+          )}
           {fixCasing(status)}
         </div>
         <div className={classes.hiddenText}>Ghost Text</div>

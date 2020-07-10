@@ -88,7 +88,11 @@ const App = (): JSX.Element => {
         </header>
         <div>
           {displayId !== '' ? (
-            <CommitmentDetails displayId={displayId} changeHash={changeHash} />
+            <CommitmentDetails
+              displayId={displayId}
+              changeHash={changeHash}
+              setDisplayId={setDisplayId}
+            />
           ) : (
             <RecurringPaymentsTable changeHash={changeHash} />
           )}

@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 
-import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
+import {
+  useGet,
+  CommitmentsQueryParams,
+  clearCache,
+} from '../hooks/axiosHooks';
 
 import fixCasing from '../utils/fixCasing';
 
@@ -115,26 +119,38 @@ const BASE_URL = 'http://localhost:9998';
 export interface DetailProps {
   displayId: string;
   changeHash: (newHash: string) => void;
+  setDisplayId: (displayId: string) => void;
 }
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
+  // Prop Destructuring
   const { displayId, changeHash } = props;
-
+  //
+  // const [data, setData] = React.useState({});
+  const [shouldUpdateData, setShouldUpdateData] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  // const [shouldGetData, setShouldGetData] = React.useState(false);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
     page: 0,
   };
 
-  // useEffect(() => {});
-
   const [response, loading, error] = useGet(
     `commitment/${displayId}`,
     queryParams
   );
+
+  // const LoadData = async () => {
+  //   const [response, loading, error] = useGet(
+  //     `commitment/${displayId}`,
+  //     queryParams
+  //   );
+  //   setData(response?.data);
+  //   return [loading, error];
+  // };
+
+  // const [loading, error] = LoadData();
 
   if (loading) {
     return <CircularProgress />;
@@ -149,6 +165,8 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   if (!data) {
     return <div></div>;
   }
+
+  // setRes(response?.data);
 
   const {
     id,
@@ -197,6 +215,10 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       console.error(error);
     }
   };
+
+  if (shouldUpdateData) {
+    setShouldUpdateData(false);
+  }
 
   return (
     <div>
@@ -287,8 +309,12 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
             cancelLabel={'Cancel'}
             confirmLabel={'Cancel Recurring Donation'}
             onConfirmClick={(ev: React.SyntheticEvent) => {
+              clearCache();
               cancelCommitment(id);
               setOpen(false);
+              // console.log(cache);
+              // console.log(cache);
+              setShouldUpdateData(true);
             }}
             open={open}
             confirmationTitle={'Cancel Recurring Donation'}

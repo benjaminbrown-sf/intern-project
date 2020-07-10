@@ -31,7 +31,7 @@ const cache = {};
 
 const loadDataJson = function (filePath) {
   if (cache[filePath]) {
-    return JSON.parse(JSON.stringify(cache[filePath]));
+    return cache[filePath];
   }
 
   let data;
