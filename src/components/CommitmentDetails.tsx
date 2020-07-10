@@ -119,7 +119,6 @@ const BASE_URL = 'http://localhost:9998';
 export interface DetailProps {
   displayId: string;
   changeHash: (newHash: string) => void;
-  setDisplayId: (displayId: string) => void;
 }
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
@@ -141,17 +140,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     queryParams
   );
 
-  // const LoadData = async () => {
-  //   const [response, loading, error] = useGet(
-  //     `commitment/${displayId}`,
-  //     queryParams
-  //   );
-  //   setData(response?.data);
-  //   return [loading, error];
-  // };
-
-  // const [loading, error] = LoadData();
-
   if (loading) {
     return <CircularProgress />;
   }
@@ -165,8 +153,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
   if (!data) {
     return <div></div>;
   }
-
-  // setRes(response?.data);
 
   const {
     id,
@@ -252,7 +238,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                   setOpen(true);
                 }}
               >
-                {fixCasing('Cancel Recurring Donation')}
+                {fixCasing('Stop Recurring Donation')}
               </Button>
             </div>
             <div>
@@ -305,19 +291,17 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
             />
           </div>
           <Confirmation
-            text={`This will cancel all future installments for this recurring donation for ${firstName} ${lastName} immediately.`}
+            text={`This will stop all future installments for this recurring donation for ${firstName} ${lastName} immediately.`}
             cancelLabel={'Cancel'}
-            confirmLabel={'Cancel Recurring Donation'}
+            confirmLabel={'Stop Recurring Donation'}
             onConfirmClick={(ev: React.SyntheticEvent) => {
               clearCache();
               cancelCommitment(id);
               setOpen(false);
-              // console.log(cache);
-              // console.log(cache);
               setShouldUpdateData(true);
             }}
             open={open}
-            confirmationTitle={'Cancel Recurring Donation'}
+            confirmationTitle={'Stop Recurring Donation'}
             onCancelClick={() => {
               setOpen(false);
             }}
