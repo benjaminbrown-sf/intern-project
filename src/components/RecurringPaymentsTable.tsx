@@ -52,9 +52,11 @@ const useStyles = makeStyles(theme => {
       alignItems: 'center',
       width: '300px', // Especially not married to this
     },
-    TextInput: {
+    searchfieldContainer: {
       justifyContent: 'right',
       borderRadius: theme.shape.borderRadius,
+      width: '250px',
+      height: '32px',
     },
     searchIcon: {
       position: 'absolute',
@@ -191,7 +193,7 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
           })}
         </div>
         <div className={classes.emptySpace}>Empty Space</div>
-        <div>
+        <div className={classes.searchfieldContainer}>
           <TextInput
             placeholder="Search"
             value={inputString}
