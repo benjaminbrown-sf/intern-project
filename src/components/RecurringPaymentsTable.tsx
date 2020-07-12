@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '300px', // Especially not married to this
+      width: '300px',
     },
     searchfieldContainer: {
       justifyContent: 'right',
@@ -120,11 +120,6 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
     search: debouncedSearchTerm,
   };
 
-  // This hook requests data from the mock server.
-  // This component will re-render every time the state of this request changes:
-  // when it sends the request, when it stops loading, when it has an error,
-  // when it has a
-
   const [response, loading, error] = useGet('commitments', queryParams);
 
   const columns = [
@@ -170,7 +165,7 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
           {filters.map(obj => {
             return (
               <Chip
-                key={obj.value + 'Chip'} // Where will this matter?
+                key={obj.value + 'Chip'}
                 variant={
                   filterVariables.includes(obj.value) ? 'outlined' : 'default'
                 }

@@ -123,10 +123,8 @@ export interface DetailProps {
 
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
-  // Prop Destructuring
   const { displayId, changeHash } = props;
-  //
-  // const [data, setData] = React.useState({});
+
   const [shouldUpdateData, setShouldUpdateData] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -197,7 +195,6 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
       const res = await axios.post(`${BASE_URL}/commitment/${commitmentId}`);
       console.log(res.data.status);
     } catch (error) {
-      // set a bool to display the error
       console.error(error);
     }
   };

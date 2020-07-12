@@ -47,7 +47,6 @@ const RecurringPaymentsTableRow = (props: RowProps): JSX.Element => {
   const schedules = props.commitment.schedules[0];
   const { id, status } = props.commitment;
 
-  // Handles Date Formatting
   const timestamp = schedules.nextPaymentTimestamp;
   const date = moment(timestamp).format('L');
 
