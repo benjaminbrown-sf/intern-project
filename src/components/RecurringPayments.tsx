@@ -14,12 +14,16 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 
 import { makeStyles } from '@material-ui/core/styles';
 
 import Menu from '../elements/Menu';
 import Button from '../elements/Button';
+import axios from 'axios';
+
+const BASE_URL = 'http://localhost:9998';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -28,6 +32,10 @@ const useStyles = makeStyles(theme => {
     },
     checkCircle: {
       color: theme.palette.success.main,
+      marginRight: '5px',
+    },
+    crossCircle: {
+      color: theme.palette.error.main,
       marginRight: '5px',
     },
     recurringContainer: {
@@ -65,6 +73,7 @@ const useStyles = makeStyles(theme => {
 });
 
 export interface Installment {
+  transactionId: string;
   date: string;
   status: string;
   amount: number;
@@ -76,12 +85,19 @@ export interface RecurringPaymentProps {
   nextPayment: string;
   recurringAmount: number;
   currency: string;
+  setShouldUpdateData: (shouldUpdateData: boolean) => void;
 }
 
 const RecurringPayments = (props: RecurringPaymentProps) => {
   const classes = useStyles(theme);
 
-  const { installments, nextPayment, recurringAmount, currency } = props;
+  const {
+    installments,
+    nextPayment,
+    recurringAmount,
+    currency,
+    setShouldUpdateData,
+  } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -93,10 +109,36 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
     { label: 'Actions', value: 'ACTIONS' },
   ];
 
+  const refundPayment = async (transactionId: string) => {
+    console.log(transactionId);
+    try {
+      await axios.post(`${BASE_URL}/transaction/refund/${transactionId}`);
+      setShouldUpdateData(true);
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+
+  const getDetails = async (transactionId: string) => {
+    try {
+      const res = await axios.get(`${BASE_URL}/transaction/${transactionId}`);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resendReceipt = (transactionId: string) => {
+    console.log('What path do you want?');
+  };
+
   const actions = [
-    { key: 'View Details' },
-    { key: 'Refund' },
-    { key: 'Resend Receipt' },
+    { key: 'View Details', func: getDetails },
+    { key: 'Refund', func: refundPayment },
+    { key: 'Resend Receipt', func: resendReceipt },
   ];
 
   return (
@@ -137,7 +179,9 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
                   <div className={classes.iconContainer}>
                     {installment.status === 'ACTIVE' ? (
                       <CheckCircleOutlineIcon className={classes.checkCircle} />
-                    ) : null}
+                    ) : (
+                      <HighlightOffIcon className={classes.crossCircle} />
+                    )}
                     <div>{fixCasing(installment.status)}</div>
                   </div>
                 </TableCell>
@@ -161,6 +205,7 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
                   onClose={() => setAnchorEl(null)}
                   setAnchorEl={setAnchorEl}
                   menuItems={actions}
+                  transactionId={installment.transactionId}
                 ></Menu>
               </TableRow>
             );

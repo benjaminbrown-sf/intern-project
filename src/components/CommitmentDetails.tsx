@@ -285,6 +285,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               installments={installments}
               recurringAmount={recurringAmount}
               currency={currency}
+              setShouldUpdateData={setShouldUpdateData}
             />
           </div>
           <Confirmation

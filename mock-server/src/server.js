@@ -300,7 +300,7 @@ app.post('/transaction/refund/:transactionId', async (req, res) => {
       .status(STATUS_CODE_NOT_FOUND)
       .send(`No match found for transaction id: ${transactionId}`);
   }
-});
+}); // This should also mutate amountRefunded
 
 app.get('/transaction/:transactionId', async (req, res) => {
   log('GET/transaction', req.params.transactionId);

@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => {
 
 export interface MenuItem {
   key: string;
-  // value: () => void;
+  func: (transactionId: string) => any; // Temp; should be bool, Promise<AxiosResponse<any | undefined>>?;
 }
 
 export interface MenuProps {
@@ -27,8 +27,8 @@ export interface MenuProps {
   anchorEl: HTMLElement | null;
   setAnchorEl: (eventTarget: (EventTarget & HTMLButtonElement) | null) => void;
   menuItems: MenuItem[]; // node?
-  itemFns?: (ev: React.SyntheticEvent) => void[]; // Temporarily optiona
   onClose: (ev: React.SyntheticEvent) => void;
+  transactionId: string;
 }
 
 const Menu = (props: MenuProps): JSX.Element => {
@@ -41,7 +41,11 @@ const Menu = (props: MenuProps): JSX.Element => {
       onClose={props.onClose}
     >
       {props.menuItems?.map((item, key) => {
-        return <MenuItem key={key}>{item.key}</MenuItem>;
+        return (
+          <MenuItem key={key} onClick={() => item.func(props.transactionId)}>
+            {item.key}
+          </MenuItem>
+        );
       })}
     </MenuMUI>
   );
