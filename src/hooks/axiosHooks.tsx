@@ -44,7 +44,7 @@ export interface CommitmentResponse {
     paymentGateway: string;
     paymentGatewayNickname: string;
     card: string;
-    lastFour: string; // needs to be a string because there can be leading 0s
+    lastFour: string;
     expiration: string;
   };
   schedules: {

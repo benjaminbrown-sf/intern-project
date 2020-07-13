@@ -14,6 +14,7 @@ const TextInput = (props: InputProps): JSX.Element => {
   const { value, placeholder, onChange } = props;
   return (
     <Input
+      style={{ maxHeight: '32px', marginTop: '1px', maxWidth: '250px' }}
       type="text"
       value={value}
       placeholder={placeholder}

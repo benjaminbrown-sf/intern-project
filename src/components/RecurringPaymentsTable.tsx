@@ -15,11 +15,8 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 
 import theme from 'theme';
 
-import {
-  useGet,
-  CommitmentsQueryParams,
-  CommitmentResponse,
-} from 'hooks/axiosHooks';
+import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
+
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -54,11 +51,13 @@ const useStyles = makeStyles(theme => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '300px', // Especially not married to this
+      width: '300px',
     },
-    TextInput: {
+    searchfieldContainer: {
       justifyContent: 'right',
       borderRadius: theme.shape.borderRadius,
+      width: '250px',
+      height: '32px',
     },
     searchIcon: {
       position: 'absolute',
@@ -122,11 +121,6 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
     search: debouncedSearchTerm,
   };
 
-  // This hook requests data from the mock server.
-  // This component will re-render every time the state of this request changes:
-  // when it sends the request, when it stops loading, when it has an error,
-  // when it has a
-
   const [response, loading, error] = useGet('commitments', queryParams);
 
   const columns = [
@@ -172,7 +166,7 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
           {filters.map(obj => {
             return (
               <Chip
-                key={obj.value + 'Chip'} // Where will this matter?
+                key={obj.value + 'Chip'}
                 variant={
                   filterVariables.includes(obj.value) ? 'outlined' : 'default'
                 }
@@ -195,7 +189,7 @@ const RecurringPaymentsTable = (props: TableProps): JSX.Element => {
           })}
         </div>
         <div className={classes.emptySpace}>Empty Space</div>
-        <div>
+        <div className={classes.searchfieldContainer}>
           <TextInput
             placeholder="Search"
             value={inputString}

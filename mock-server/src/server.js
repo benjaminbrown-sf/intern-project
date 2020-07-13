@@ -31,7 +31,7 @@ const cache = {};
 
 const loadDataJson = function (filePath) {
   if (cache[filePath]) {
-    return JSON.parse(JSON.stringify(cache[filePath]));
+    return cache[filePath];
   }
 
   let data;
@@ -260,7 +260,7 @@ app.get('/commitment/:commitmentId', async (req, res) => {
 
 // Stop a commitment by commitment id
 app.post('/commitment/:commitmentId', async (req, res) => {
-  log('POST/commitment', req.prams.commitmentId);
+  log('POST/commitment', req.params.commitmentId);
   let { commitmentId } = req.params;
   const commitment = getCommitment(commitmentId);
 
@@ -282,7 +282,7 @@ app.post('/commitment/:commitmentId', async (req, res) => {
 
 // Refund a transaction by transaction id
 app.post('/transaction/refund/:transactionId', async (req, res) => {
-  log('POST/transaction', req.prams.transactionId);
+  log('POST/transaction', req.params.transactionId);
   let { transactionId } = req.params;
   const transaction = getTransaction(transactionId);
 

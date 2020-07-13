@@ -1,6 +1,11 @@
 import React from 'react';
+import axios from 'axios';
 
-import { useGet, CommitmentsQueryParams } from 'hooks/axiosHooks';
+import {
+  useGet,
+  CommitmentsQueryParams,
+  clearCache,
+} from '../hooks/axiosHooks';
 
 import { fixCasing } from 'utils';
 
@@ -14,9 +19,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PaymentIcon from '@material-ui/icons/Payment';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import PaymentDetails from './PaymentDetails';
 import RecurringPayments from './RecurringPayments';
+import Confirmation from '../elements/Confirmation';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -75,6 +82,11 @@ const useStyles = makeStyles(theme => {
       marginRight: '10px',
       transform: 'scale(1.5)',
     },
+    crossCircle: {
+      color: theme.palette.error.main,
+      marginRight: '10px',
+      transform: 'scale(1.5)',
+    },
     accountIcon: {
       fontSize: 'medium',
       marginBottom: '18px',
@@ -102,6 +114,8 @@ const useStyles = makeStyles(theme => {
   };
 });
 
+const BASE_URL = 'http://localhost:9998';
+
 export interface DetailProps {
   displayId: string;
   changeHash: (newHash: string) => void;
@@ -110,6 +124,9 @@ export interface DetailProps {
 const CommitmentDetails = (props: DetailProps): JSX.Element => {
   const classes = useStyles(theme);
   const { displayId, changeHash } = props;
+
+  const [shouldUpdateData, setShouldUpdateData] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   const queryParams: CommitmentsQueryParams = {
     limit: 1,
@@ -173,6 +190,19 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
     recurringId: schedules[0].id,
   };
 
+  const cancelCommitment = async commitmentId => {
+    try {
+      const res = await axios.post(`${BASE_URL}/commitment/${commitmentId}`);
+      console.log(res.data.status);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (shouldUpdateData) {
+    setShouldUpdateData(false);
+  }
+
   return (
     <div>
       {error ? (
@@ -201,8 +231,11 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                 variant="contained"
                 color="primary"
                 size="medium"
+                onClick={() => {
+                  setOpen(true);
+                }}
               >
-                {fixCasing('Cancel Recurring Donation')}
+                {fixCasing('Stop Recurring Donation')}
               </Button>
             </div>
             <div>
@@ -222,7 +255,7 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
                 </div>
               ) : (
                 <div className={classes.iconContainer}>
-                  <CheckCircleOutlineIcon className={classes.checkCircle} />
+                  <HighlightOffIcon className={classes.crossCircle} />
                   <div>{fixCasing(status)}</div>
                 </div>
               )}
@@ -254,6 +287,22 @@ const CommitmentDetails = (props: DetailProps): JSX.Element => {
               currency={currency}
             />
           </div>
+          <Confirmation
+            text={`This will stop all future installments for this recurring donation for ${firstName} ${lastName} immediately.`}
+            cancelLabel={'Cancel'}
+            confirmLabel={'Stop Recurring Donation'}
+            onConfirmClick={(ev: React.SyntheticEvent) => {
+              clearCache();
+              cancelCommitment(id);
+              setOpen(false);
+              setShouldUpdateData(true);
+            }}
+            open={open}
+            confirmationTitle={'Stop Recurring Donation'}
+            onCancelClick={() => {
+              setOpen(false);
+            }}
+          />
         </div>
       )}
     </div>
