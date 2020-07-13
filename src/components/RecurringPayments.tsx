@@ -18,6 +18,9 @@ import DateRangeIcon from '@material-ui/icons/DateRange';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import Menu from '../elements/Menu';
+import Button from '../elements/Button';
+
 const useStyles = makeStyles(theme => {
   return {
     paymentsTable: {
@@ -54,6 +57,10 @@ const useStyles = makeStyles(theme => {
     alignRow: {
       alignItems: 'center',
     },
+    actionBox: {
+      boxShadow:
+        '0px 1px 3px -3px rgba(0,0,0,0.10), 0px 2px 1px 1px rgba(0,0,0,0.08), 0px 1px 1px 2px rgba(0,0,0,0.12)',
+    },
   };
 });
 
@@ -73,13 +80,23 @@ export interface RecurringPaymentProps {
 
 const RecurringPayments = (props: RecurringPaymentProps) => {
   const classes = useStyles(theme);
+
   const { installments, nextPayment, recurringAmount, currency } = props;
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const tableHeaders = [
     { label: 'Date', value: 'DATE' },
     { label: 'Status', value: 'STATUS' },
     { label: 'Amount', value: 'AMOUNT' },
     { label: 'Actions', value: 'ACTIONS' },
+  ];
+
+  const actions = [
+    { key: 'View Details' },
+    { key: 'Refund' },
+    { key: 'Resend Receipt' },
   ];
 
   return (
@@ -128,8 +145,23 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
                   ${installment.amount / 1000} {installment.currency}
                 </TableCell>
                 <TableCell key={`RecurringPayment-${i}-action`}>
-                  <MoreVertIcon className={classes.actionIcon} />
+                  <Button
+                    visible={false}
+                    type={undefined}
+                    onClick={(ev: React.SyntheticEvent) => {
+                      setAnchorEl(ev.target as HTMLElement); // Should always be an HTML element
+                    }}
+                  >
+                    <MoreVertIcon className={classes.actionIcon} />
+                  </Button>
                 </TableCell>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(open)}
+                  onClose={() => setAnchorEl(null)}
+                  setAnchorEl={setAnchorEl}
+                  menuItems={actions}
+                ></Menu>
               </TableRow>
             );
           })}
