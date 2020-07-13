@@ -54,15 +54,13 @@ export interface CommitmentResponse {
     frequency: 'MONTH';
     status: PaymentStatus;
   }[];
-  installments: [
-    {
-      transactionId: string;
-      date: string;
-      status: 'SUCCEEDED';
-      amount: 10;
-      currency: 'USD';
-    }
-  ];
+  installments: {
+    transactionId: string;
+    date: string;
+    status: 'SUCCEEDED';
+    amount: 10;
+    currency: 'USD';
+  }[];
   customFields: { [key: string]: string };
 }
 

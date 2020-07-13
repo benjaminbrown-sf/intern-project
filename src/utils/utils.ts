@@ -1,3 +1,3 @@
-export const fixCasing = (str: string) => {
+export const fixCasing = (str: string): string => {
   return str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1);
 };

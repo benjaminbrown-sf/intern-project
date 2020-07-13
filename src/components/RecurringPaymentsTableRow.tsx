@@ -1,12 +1,13 @@
 import React from 'react';
 import moment from 'moment';
-import fixCasing from '../utils/fixCasing';
+import { fixCasing } from 'utils';
 import { TableRow, TableCell } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../theme';
 import { CommitmentResponse } from '../hooks/axiosHooks';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+
 
 const useStyles = makeStyles(theme => {
   return {

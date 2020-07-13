@@ -1,9 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 
-import theme from '../theme';
+import theme from 'theme';
 
-import fixCasing from '../utils/fixCasing';
+import { fixCasing } from 'utils';
 
 import {
   Table,
@@ -71,7 +71,7 @@ export interface RecurringPaymentProps {
   currency: string;
 }
 
-const RecurringPayments = (props: RecurringPaymentProps) => {
+const RecurringPayments = (props: RecurringPaymentProps): JSX.Element => {
   const classes = useStyles(theme);
   const { installments, nextPayment, recurringAmount, currency } = props;
 

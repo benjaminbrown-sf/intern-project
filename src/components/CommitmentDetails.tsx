@@ -7,9 +7,9 @@ import {
   clearCache,
 } from '../hooks/axiosHooks';
 
-import fixCasing from '../utils/fixCasing';
+import { fixCasing } from 'utils';
 
-import theme from '../theme';
+import theme from 'theme';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Button } from '@material-ui/core';

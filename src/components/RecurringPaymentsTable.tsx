@@ -10,12 +10,13 @@ import {
   Chip,
 } from '@material-ui/core';
 
-import TextInput from '../elements/TextInput';
+import TextInput from 'elements/TextInput';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
-import theme from '../theme';
+import theme from 'theme';
 
 import { useGet, CommitmentsQueryParams } from '../hooks/axiosHooks';
+
 
 import { makeStyles } from '@material-ui/core/styles';
 
