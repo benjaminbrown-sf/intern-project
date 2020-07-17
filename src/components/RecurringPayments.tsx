@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment';
 
 import theme from '../theme';
@@ -121,18 +121,61 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
     }
   };
 
+  const resendReceipt = (transactionId: string) => {
+    console.log('What path do you want?');
+  };
+
   const getDetails = async (transactionId: string) => {
     try {
-      const res = await axios.get(`${BASE_URL}/transaction/${transactionId}`);
-      console.log(res);
-      return res;
+      const response = await axios.get(
+        `${BASE_URL}/transaction/${transactionId}`
+      );
+      const { data } = response;
+      console.log(data);
+      return data;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const resendReceipt = (transactionId: string) => {
-    console.log('What path do you want?');
+  const handleDetails = (transactionId: string): any => {
+    getDetails(transactionId).then(response => {
+      const {
+        timestamp,
+        status,
+        amount,
+        currencyCode,
+        originalTransactionId,
+      } = response;
+      return {
+        timestamp,
+        status,
+        amount,
+        currencyCode,
+        originalTransactionId,
+      };
+    });
+  };
+
+  const payments: any = [];
+
+  const setPayments = () => {
+    installments.forEach(el => {
+      const {
+        timestamp,
+        status,
+        amount,
+        currencyCode,
+        originalTransactionId,
+      } = handleDetails(el.transactionId);
+      payments.push({
+        timestamp,
+        status,
+        amount,
+        currencyCode,
+        originalTransactionId,
+      });
+    });
   };
 
   const actions = [
@@ -167,6 +210,7 @@ const RecurringPayments = (props: RecurringPaymentProps) => {
         </TableHead>
         <TableBody>
           {installments.map((installment, i) => {
+            console.log(getDetails(installment.transactionId));
             return (
               <TableRow
                 className={classes.alignRow}
